@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+
+@theme{
+   --color-primary : #10B981 ;
+   --color-primary-dull : #059669 ;
+   --color-light-bg : #ECFDF5 ;
+   --color-borderColor : #c4c7d2 ;
+}
+
+@layer components{
+     .title{
+  @apply text-3xl md:text-6xl font-bold text-primary
+}
+.sub-title{
+  @apply text-xl md:text-2xl mt-5 text-slate-800
+}
+.text{
+  @apply text-xl md:text-2xl mt-5 text-slate-600
+}
+}
