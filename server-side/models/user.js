@@ -5,9 +5,9 @@ const userSchema = mongoose.Schema({
     email : { type : String, require : true, unique : true},
     password : { type : String, require : true},
     contact : { type : Number, require : true},
-   
-   
-})
+   role: {type : String },
+    clothesPost : [{type : mongoose.Types.ObjectId, ref : 'clothe'}],
+},{timestamps: true})
 
 const User = mongoose.model('user', userSchema)
 export default User ;

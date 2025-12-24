@@ -118,7 +118,7 @@ const Navbar = () => {
           className="md:hidden text-2xl"
           onClick={() => setIsMenuOpen(true)}
         >
-          <FiMenu className={isScrolled ? "text-gray-800" : "text-light-bg"} />
+          <FiMenu className={isScrolled ? "text-primary" : "text-primary-dull"} />
         </button>
       </div>
 

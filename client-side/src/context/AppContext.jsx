@@ -11,12 +11,17 @@ export const AppContext = createContext()
 export const AppContextProvider =({children})=>{
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const fetchUser = async()=>{
     try {
       const res = await axios.get('/isUser')
        console.log(res.data)
-      if(res.data.success) return setUser(res.data.user)
+      if(res.data.success) {
+
+        setUser(res.data.user)
+        setLoading(false)
+      }
       //  toast.error(res.data.message)
     } catch (error) {
       // toast.error(error.message)
@@ -28,9 +33,9 @@ export const AppContextProvider =({children})=>{
   useEffect(()=>{
     fetchUser()
   },[])
-  const value = {axios, user, setUser, navigate, }
+  const value = {axios, user, setUser, navigate, loading, setLoading}
  return   <AppContext.Provider value={value}>
-            {children}
+        {loading ? 'Loading...' : children}
     </AppContext.Provider>
 
 }

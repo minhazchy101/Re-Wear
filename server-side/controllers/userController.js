@@ -8,8 +8,8 @@ export const signup = async(req,res)=>{
 console.log('token -> ',req.cookies.token)
     if(req.cookies.token)  return res.send({success : false, message: "You are already signed in."})
 
-    const {name, email , contact, password} = req.body;
-   if(!name || !email  || !contact || !password) return res.send({success : false, message: "Credentials missing.!"})
+    const {name, email , contact, password, role} = req.body;
+   if(!name || !email  || !contact || !password , !role) return res.send({success : false, message: "Credentials missing.!"})
     const usedEmail = await  User.findOne({email})
 
   if(usedEmail) return res.send({success : false, message: "Credentials Already Used.!"})
@@ -21,7 +21,8 @@ console.log('token -> ',req.cookies.token)
     name,
     email,
     password : passHash,
-    contact
+    contact,
+    role
   })
 
   

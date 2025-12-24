@@ -111,39 +111,7 @@ export default function Signup() {
             </p>
           )}
         </div>
-
-        {/* Contact */}
-        <div className="mt-5">
-          <label className="text-sm font-medium text-gray-700">
-            Contact Number
-          </label>
-          <div className="relative mt-2">
-            <FiPhone className="absolute left-3 top-3.5 text-gray-400" />
-            <input
-              type="tel"
-              placeholder="Phone number"
-              className={`w-full pl-10 pr-3 py-3 rounded-lg border outline-none
-              ${errors.contact
-                ? "border-red-400 focus:ring-red-300"
-                : "border-gray-200 focus:ring-emerald-300"}
-              focus:ring-2`}
-              {...register("contact", {
-                required: "Contact number is required",
-                minLength: {
-                  value: 10,
-                  message: "Invalid contact number",
-                },
-              })}
-            />
-          </div>
-          {errors.contact && (
-            <p className="text-sm text-red-500 mt-1">
-              {errors.contact.message}
-            </p>
-          )}
-        </div>
-
-        {/* Password */}
+ {/* Password */}
         <div className="mt-5">
           <label className="text-sm font-medium text-gray-700">
             Password
@@ -180,6 +148,68 @@ export default function Signup() {
             </p>
           )}
         </div>
+        {/* Role Selection */}
+<div className="mt-5">
+  <label className="text-sm font-medium text-gray-700 mb-2 block">
+    Select your role
+  </label>
+  <div className="flex gap-4 mt-2">
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        value="sharer"
+        {...register("role", { required: "Role is required" })}
+        className="accent-primary"
+      />
+      Sharer
+    </label>
+    <label className="flex items-center gap-2">
+      <input
+        type="radio"
+        value="finder"
+        {...register("role", { required: "Role is required" })}
+        className="accent-primary"
+      />
+      Finder
+    </label>
+  </div>
+  {errors.role && (
+    <p className="text-sm text-red-500 mt-1">{errors.role.message}</p>
+  )}
+</div>
+
+        {/* Contact */}
+        <div className="mt-5">
+          <label className="text-sm font-medium text-gray-700">
+            Contact Number
+          </label>
+          <div className="relative mt-2">
+            <FiPhone className="absolute left-3 top-3.5 text-gray-400" />
+            <input
+              type="tel"
+              placeholder="Phone number"
+              className={`w-full pl-10 pr-3 py-3 rounded-lg border outline-none
+              ${errors.contact
+                ? "border-red-400 focus:ring-red-300"
+                : "border-gray-200 focus:ring-emerald-300"}
+              focus:ring-2`}
+              {...register("contact", {
+                required: "Contact number is required",
+                minLength: {
+                  value: 10,
+                  message: "Invalid contact number",
+                },
+              })}
+            />
+          </div>
+          {errors.contact && (
+            <p className="text-sm text-red-500 mt-1">
+              {errors.contact.message}
+            </p>
+          )}
+        </div>
+
+       
 
         {/* Submit */}
         <button 
