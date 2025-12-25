@@ -10,11 +10,12 @@ import Signup from './pages/Signup';
 import {Toaster} from 'react-hot-toast'
 import { useAppContext } from './context/AppContext';
 import DashboardLayout from './pages/dashboard/dashboardLayout';
-import Profile from './pages/profile';
-import AddClothes from './components/dashboardComponent/giver/addClothes';
+
 import PurchasedClothes from './components/dashboardComponent/taker/PurchasedClothes';
 import Workflow from './components/dashboardComponent/giver/Workflow';
 import Selected from './components/dashboardComponent/taker/Selected';
+import AddClothes from './components/dashboardComponent/giver/AddClothes';
+import Profile from './pages/Profile';
 // import AddClothes from './components/dashboardComponent/giver/addClothes';
 
 const App = () => {
@@ -29,7 +30,7 @@ const App = () => {
       <div className='min-h-screen'>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/products' element={<AllProducts/>}/>
+        <Route path='/allClothes' element={<AllProducts/>}/>
         <Route path='/signin' element={<Signin/>}/>
         <Route path='/signup' element={<Signup/>}/>
         <Route path='/profile' element={user ? <Profile/> : <Signin/>}/>

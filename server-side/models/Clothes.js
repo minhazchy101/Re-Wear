@@ -3,8 +3,11 @@ import mongoose from "mongoose"
 const clotheSchema = mongoose.Schema({
 
 title  : { type : String, require : true},
+giverName  : { type : String, require : true},
+giverEmail  : { type : String, require : true},
+giverId  : { type : String, require : true},
 description  : { type : String, require : true},
-category  : { type : String, require : true, enum: ["Men", "Women", "Kids"],},
+category  : { type : String, require : true, enum: ["Boy", "Girl" , "Men", "Women", "Kids", "Baby", "Seniors"],},
 size  : { type : String, require : true, enum: [ "S", "M", "L", "XL", "XXL"],},
 condition  : { type : String, require : true,  enum: [
     "New with tags",
@@ -40,14 +43,13 @@ customCurrency: {
     return this.currency === "OTHER"
   }
 },
-
-
-images  : { type : String, require : true},
+images  : {type : Array, require : true},
 location  : { type : String, require : true},
 contactNumber  : { type : Number, require : true},
 status  : { type : String, require : true, default : "Available"},
-postedBy  : {type : mongoose.Types.ObjectId, ref : 'user'},
-like : [{type : mongoose.Types.ObjectId, ref : 'user'}],
+
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }]
+
    
 })
 

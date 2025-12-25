@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FiUpload } from "react-icons/fi";
+import { useAppContext } from "../../../context/AppContext";
+import toast from "react-hot-toast";
+
 
 const AddClothes = () => {
+  const { axios, navigate} = useAppContext();
+ 
   const {
     register,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    reset,
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       category: "Men",
@@ -32,9 +38,38 @@ const AddClothes = () => {
     }
   }, [isFree, setValue]);
 
-  const onSubmit = (data) => {
-    data.images = files.filter(Boolean);
-    console.log("FORM DATA:", data);
+  const onSubmit = async (data) => {
+    if (!files.some((file) => file !== null)) {
+      return toast.error("Please upload at least 1 image");
+    }
+    try {
+      const clothesData = {
+        ...data,
+        price: Number(data.price),
+      };
+      const formData = new FormData();
+      formData.append("clothesData", JSON.stringify(clothesData));
+
+      files.forEach((file) => {
+        if (file) {
+          formData.append("images", file);
+        }
+      });
+
+      const res = await axios.post("/add-clothes", formData);
+      if (res.data.success) {
+        toast.success(res.data.message)
+        reset()
+        navigate('/profile')
+      }
+      else{
+        toast.error(res.data.message)
+
+      }
+      
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const inputClass =
@@ -47,13 +82,22 @@ const AddClothes = () => {
           Add Clothes Donation
         </h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           {/* IMAGES */}
           <div className="md:col-span-2">
-            <label className="font-medium text-gray-700 mb-2 block">Images</label>
+            <label className="font-medium text-gray-700 mb-2 block">
+              Images
+            </label>
             <div className="flex gap-4 flex-wrap">
               {files.map((file, index) => (
-                <label key={index} htmlFor={`image${index}`} className="group cursor-pointer">
+                <label
+                  key={index}
+                  htmlFor={`image${index}`}
+                  className="group cursor-pointer"
+                >
                   <input
                     type="file"
                     accept="image/*"
@@ -87,34 +131,51 @@ const AddClothes = () => {
 
           {/* TITLE */}
           <div className="md:col-span-2">
-            <label className="font-medium text-gray-700 mb-1 block">Title</label>
+            <label className="font-medium text-gray-700 mb-1 block">
+              Title
+            </label>
             <input
               {...register("title", { required: true })}
               className={inputClass}
               placeholder="e.g. Denim Jacket"
             />
-            {errors.title && <p className="text-red-500 text-sm mt-1">Title is required</p>}
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">Title is required</p>
+            )}
           </div>
 
           {/* DESCRIPTION */}
           <div className="md:col-span-2">
-            <label className="font-medium text-gray-700 mb-1 block">Description</label>
+            <label className="font-medium text-gray-700 mb-1 block">
+              Description
+            </label>
             <textarea
               {...register("description", { required: true })}
               rows={4}
               className={inputClass}
               placeholder="Describe the item..."
             />
-            {errors.description && <p className="text-red-500 text-sm mt-1">Description is required</p>}
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">
+                Description is required
+              </p>
+            )}
           </div>
 
           {/* CATEGORY */}
           <div className="md:col-span-2">
-            <label className="font-medium text-gray-700 mb-2 block">Category</label>
+            <label className="font-medium text-gray-700 mb-2 block">
+              Category
+            </label>
             <div className="flex flex-wrap gap-3">
-              {["Men", "Women", "Kids"].map((cat) => (
+              {["Boy", "Girl" , "Men", "Women", "Kids", "Baby", "Seniors"].map((cat) => (
                 <label key={cat} className="cursor-pointer">
-                  <input type="radio" value={cat} {...register("category")} className="hidden peer" />
+                  <input
+                    type="radio"
+                    value={cat}
+                    {...register("category")}
+                    className="hidden peer"
+                  />
                   <div className="px-4 py-2 rounded-full border border-gray-300 peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary hover:border-primary transition-all duration-300">
                     {cat}
                   </div>
@@ -135,7 +196,9 @@ const AddClothes = () => {
 
           {/* CONDITION */}
           <div>
-            <label className="font-medium text-gray-700 mb-1 block">Condition</label>
+            <label className="font-medium text-gray-700 mb-1 block">
+              Condition
+            </label>
             <select {...register("condition")} className={inputClass}>
               {[
                 "New with tags",
@@ -151,10 +214,16 @@ const AddClothes = () => {
 
           {/* PRICING */}
           <div className="md:col-span-2">
-            <label className="font-medium text-gray-700 mb-2 block">Pricing</label>
+            <label className="font-medium text-gray-700 mb-2 block">
+              Pricing
+            </label>
 
             <div className="flex items-center gap-2 mb-3 text-gray-600">
-              <input type="checkbox" {...register("isFree")} className="accent-primary scale-110" />
+              <input
+                type="checkbox"
+                {...register("isFree")}
+                className="accent-primary scale-110"
+              />
               This item is free
             </div>
 
@@ -166,7 +235,10 @@ const AddClothes = () => {
                   className={inputClass + " flex-1"}
                   placeholder="Enter price"
                 />
-                <select {...register("currency")} className={inputClass + " w-28"}>
+                <select
+                  {...register("currency")}
+                  className={inputClass + " w-28"}
+                >
                   {["BDT", "PKR", "USD", "SAR", "OTHER"].map((cur) => (
                     <option key={cur} value={cur}>
                       {cur}
@@ -187,23 +259,48 @@ const AddClothes = () => {
 
           {/* LOCATION */}
           <div>
-            <label className="font-medium text-gray-700 mb-1 block">Location</label>
-            <input {...register("location")} className={inputClass} placeholder="City, area..." />
+            <label className="font-medium text-gray-700 mb-1 block">
+              Location
+            </label>
+            <input
+              {...register("location")}
+              className={inputClass}
+              placeholder="City, area..."
+            />
           </div>
 
           {/* CONTACT NUMBER */}
           <div>
-            <label className="font-medium text-gray-700 mb-1 block">Contact Number</label>
-            <input type="number" {...register("contactNumber")} className={inputClass} />
+            <label className="font-medium text-gray-700 mb-1 block">
+              Contact Number
+            </label>
+            <input
+              type="number"
+              {...register("contactNumber")}
+              className={inputClass}
+            />
           </div>
-
           {/* SUBMIT */}
           <div className="md:col-span-2 flex justify-center mt-6">
             <button
               type="submit"
-              className="bg-primary text-white px-8 py-3 rounded-xl hover:scale-[1.03] hover:shadow-lg active:scale-95 transition-all duration-300"
+              disabled={isSubmitting}
+              className={`bg-primary text-white px-8 py-3 rounded-xl transition-all duration-300
+      ${
+        isSubmitting
+          ? "opacity-80 cursor-not-allowed"
+          : "hover:scale-[1.03] hover:shadow-lg active:scale-95"
+      }
+    `}
             >
-              Post Item
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                  Posting...
+                </span>
+              ) : (
+                "Post Item"
+              )}
             </button>
           </div>
         </form>

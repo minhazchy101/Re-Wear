@@ -67,8 +67,7 @@ export const signin = async (req, res)=>{
 export const isUser = async(req, res)=>{
   
   try {
-   const user = await User.findOne({_id : req.id}) 
-   console.log(user)
+   const user = await User.findOne({_id : req.id}).populate("clothesPost").sort({createdAt : -1})
    res.send({success : true, user})
   } catch (error) {
      res.send({success : false, message: `User not Found for : ${error}`})

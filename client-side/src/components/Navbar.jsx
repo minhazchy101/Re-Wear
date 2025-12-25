@@ -23,9 +23,11 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Products", path: "/products" },
+    { name: "All Clothes", path: "/allClothes" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
+    { name: "Profile", path: "/profile" },
+    { name: "Dashboard", path: "/dashboard" },
   ];
 
   const logout = async () => {

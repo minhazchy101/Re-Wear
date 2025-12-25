@@ -11,15 +11,37 @@ export const AppContext = createContext()
 export const AppContextProvider =({children})=>{
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [clothes, setClothes] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const fetchUser = async()=>{
     try {
       const res = await axios.get('/isUser')
+       console.log(res.data.user.clothesPost)
+      if(res.data.success) {
+        setUser(res.data.user)
+        setLoading(false)
+      }else{
+         setUser(null)
+        setLoading(false)
+      }
+      //  toast.error(res.data.message)
+    } catch (error) {
+      // toast.error(error.message)
+     console.log(error.message)
+      
+    }
+  }
+  console.log('clothes : ', clothes)
+  const fetchAllClothes = async()=>{
+    try {
+      const res = await axios.get('/getAllClothes')
        console.log(res.data)
       if(res.data.success) {
-
-        setUser(res.data.user)
+        setClothes(res.data.data)
+        setLoading(false)
+      }else{
+         setClothes(null)
         setLoading(false)
       }
       //  toast.error(res.data.message)
@@ -32,8 +54,9 @@ export const AppContextProvider =({children})=>{
 
   useEffect(()=>{
     fetchUser()
+    fetchAllClothes()
   },[])
-  const value = {axios, user, setUser, navigate, loading, setLoading}
+  const value = {axios, user, setUser, navigate, loading, setLoading, clothes, setClothes}
  return   <AppContext.Provider value={value}>
         {loading ? 'Loading...' : children}
     </AppContext.Provider>
