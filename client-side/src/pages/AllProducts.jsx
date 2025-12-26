@@ -6,7 +6,7 @@ const AllProducts = () => {
   const { clothes } = useAppContext()
 
   return (
-    <section className="min-h-screen bg-light-bg px-6 md:px-16 lg:px-24 xl:px-32 py-10">
+    <section className="min-h-screen px-6 md:px-16 lg:px-24 xl:px-32 py-10">
       
       {/* Page Header */}
       <div className="my-10 text-center">

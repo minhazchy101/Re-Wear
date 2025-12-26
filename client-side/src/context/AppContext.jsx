@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 axios.defaults.withCredentials = true ; 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL ;
 
@@ -33,6 +34,7 @@ export const AppContextProvider =({children})=>{
     }
   }
   console.log('clothes : ', clothes)
+
   const fetchAllClothes = async()=>{
     try {
       const res = await axios.get('/getAllClothes')
@@ -51,12 +53,32 @@ export const AppContextProvider =({children})=>{
       
     }
   }
+console.log('user => ', user)
+  const selectItem = async(id)=>{
+    if(!user) return toast.error("Please log in to continue.")
+    if(user.role === 'sharer') return toast.error("Only Finder can select the item.")
+    try {
+      const res = await axios.post('/select-item', {id})
+      if (res.data.success) {
+        toast.success(res.data.message)
+      }
+      else{
+        toast.error(res.data.message)
+      }
+    } catch (error) {
+     toast.error(error.message)
+    }
+  }
 
   useEffect(()=>{
     fetchUser()
     fetchAllClothes()
   },[])
-  const value = {axios, user, setUser, navigate, loading, setLoading, clothes, setClothes}
+  const value = {axios, navigate,
+     user, setUser,
+      loading, setLoading,
+       clothes, setClothes,
+      selectItem,}
  return   <AppContext.Provider value={value}>
         {loading ? 'Loading...' : children}
     </AppContext.Provider>

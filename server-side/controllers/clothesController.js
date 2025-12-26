@@ -29,7 +29,7 @@ if (!user) {
       giverId : id,   
     };
     const data = await Clothe.create(finalData) ;
-    user.clothesPost.push(data._id) ;
+  user.clothesPost.push(data._id) ;
   await user.save()
     res.json({
       success: true,

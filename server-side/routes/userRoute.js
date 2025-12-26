@@ -1,7 +1,8 @@
 
 import express from 'express';
-import { isUser, logout, signin, signup } from '../controllers/userController.js';
+import { isUser, logout, selectItems, signin, signup } from '../controllers/userController.js';
 import { userAuth } from '../middleware/userAuth.js';
+import { takerAuth } from '../middleware/takerAuth copy.js';
 const userRouter = express.Router();
 
 // C
@@ -9,6 +10,9 @@ userRouter.post('/signup', signup)
 userRouter.post('/signin',signin)
 userRouter.get('/isUser',userAuth, isUser)
 userRouter.get('/logout',userAuth, logout)
+
+userRouter.post('/select-item', takerAuth, selectItems)
+
 
 // // R
 // userRouter.get('/readUsers',readUsers)

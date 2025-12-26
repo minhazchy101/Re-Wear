@@ -6,6 +6,7 @@ import userRouter from './routes/userRoute.js'
 import { connectDB } from './config/db.js'
 import clothesRouter from './routes/clothesRoute.js';
 import connectCloudinary from './config/cloudinary.js';
+import orderRouter from './routes/orderRoute.js';
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.get('/', (req, res)=> res.send("server is working...!!"))
 app.use(userRouter)
 app.use(clothesRouter)
+app.use(orderRouter)
 
 
 

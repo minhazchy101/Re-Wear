@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import User from '../models/user.js';
+import Clothe from '../models/Clothes.js';
 
 
 export const signup = async(req,res)=>{
@@ -67,7 +68,21 @@ export const signin = async (req, res)=>{
 export const isUser = async(req, res)=>{
   
   try {
-   const user = await User.findOne({_id : req.id}).populate("clothesPost").sort({createdAt : -1})
+   const user = await User.findOne({_id : req.id}).populate([
+  {
+    path: "clothesPost",
+    options: { sort: { createdAt: -1 } }
+  },
+  {
+    path: "selectItems",
+    options: { sort: { createdAt: -1 } }
+  },
+  {
+    path: "orderItems",
+    options: { sort: { createdAt: -1 } }
+  },
+]);
+
    res.send({success : true, user})
   } catch (error) {
      res.send({success : false, message: `User not Found for : ${error}`})
@@ -84,7 +99,20 @@ export const logout = async (req, res)=>{
 }
 
 
-
+export const selectItems =async (req, res)=>{
+  const takerId =  req.takerId ;
+  const itemsId =  req.body.id ;
+ 
+  try {
+    const clothe = await Clothe.findOne({_id : itemsId})
+    const user = await User.findOne({_id : takerId})
+    user.selectItems.push(clothe._id)
+    await user.save()
+    res.send({ success: true, message: "Item has been selected successfully!" });
+  } catch (error) {
+      res.send({success : false, message: `Select items failed for : ${error}`})
+  }
+}
 
 
 

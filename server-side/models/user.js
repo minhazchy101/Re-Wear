@@ -7,6 +7,10 @@ const userSchema = mongoose.Schema({
     contact : { type : Number, require : true},
     role: {type : String },
     clothesPost : [{type : mongoose.Schema.Types.ObjectId, ref : 'clothe'}],
+    selectItems : [{type : mongoose.Schema.Types.ObjectId, ref : 'clothe'}],
+    orderItems : [{type : mongoose.Schema.Types.ObjectId, ref : 'order'}],
+    workItems : [{type : mongoose.Schema.Types.ObjectId, ref : 'order'}],
+    
 },{timestamps: true})
 
 const User = mongoose.model('user', userSchema)

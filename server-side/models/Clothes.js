@@ -51,7 +51,9 @@ status  : { type : String, require : true, default : "Available"},
   likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }]
 
    
-})
+}, {
+    timestamps: true
+  })
 
 const Clothe = mongoose.model('clothe', clotheSchema)
 export default Clothe ;

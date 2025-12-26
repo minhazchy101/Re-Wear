@@ -16,6 +16,7 @@ import Workflow from './components/dashboardComponent/giver/Workflow';
 import Selected from './components/dashboardComponent/taker/Selected';
 import AddClothes from './components/dashboardComponent/giver/AddClothes';
 import Profile from './pages/Profile';
+import ClotheDetails from './pages/ClotheDetails';
 // import AddClothes from './components/dashboardComponent/giver/addClothes';
 
 const App = () => {
@@ -31,6 +32,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/allClothes' element={<AllProducts/>}/>
+        <Route path='/clothe-details/:id' element={<ClotheDetails/>}/>
         <Route path='/signin' element={<Signin/>}/>
         <Route path='/signup' element={<Signup/>}/>
         <Route path='/profile' element={user ? <Profile/> : <Signin/>}/>

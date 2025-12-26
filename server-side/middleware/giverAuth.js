@@ -22,4 +22,4 @@ export const giverAuth = async(req, res, next)=>{
     } catch (error) {
         return res.send({success : false, message: error.message})
     }
-}
+} ;
