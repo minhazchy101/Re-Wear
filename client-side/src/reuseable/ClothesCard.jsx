@@ -1,113 +1,142 @@
 import React, { useState } from "react";
-import { FiHeart, FiEdit, FiMapPin, FiTag, FiUser, FiBox } from "react-icons/fi";
+import {
+  FiHeart,
+  FiBox,
+  FiMapPin,
+  FiCheckCircle,
+  FiTag,
+} from "react-icons/fi";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
 const ClothesCard = ({ item }) => {
-  const { user, axios, navigate,selectItem } = useAppContext();
-  const [likes, setLikes] = useState(item.likes || []);
+  const { user, axios, navigate, selectItem, handleDelete, removeSelectItem,selectItems } =
+    useAppContext();
 
+  const [likes, setLikes] = useState(item.likes || []);
   const [animating, setAnimating] = useState(false);
 
- 
   const isLiked = user ? likes.includes(user._id) : false;
+const isSelected = selectItems?.some(selectedItem => selectedItem._id === item._id);
 
   const handleLike = async () => {
-    if (!user) {
-      toast.error("Login to like items!");
-      return;
-    }
-
+    if (!user) return toast.error("Login to like items!");
     try {
       const res = await axios.get(`/like/${item._id}`);
       if (res.data.success) {
-      
         setLikes(res.data.likes || []);
-  
         setAnimating(true);
         setTimeout(() => setAnimating(false), 300);
-
-        toast.success(isLiked ? "Like removed" : "Liked!");
-      } else {
-        toast.error("Something went wrong");
       }
-    } catch (error) {
-      console.error("Like update failed:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Failed to like item");
+    } catch {
+      toast.error("Failed to like item");
     }
   };
 
   return (
-    <div
-    className="max-w-sm bg-white rounded-3xl shadow-xl overflow-hidden transform transition-transform duration-300 hover:scale-[1.03]">
-      {/* Image */}
+    <div className="bg-white rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden">
+      {/* IMAGE */}
       <div
-      onClick={()=>{navigate(`/clothe-details/${item._id}`);scrollTo(0,0)}}
-      className="relative w-72 cursor-pointer group">
+        onClick={() => navigate(`/clothe-details/${item._id}`)}
+        className="relative cursor-pointer group"
+      >
         <img
           src={item.images[0]}
           alt={item.title}
-          className="w-72 h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
         />
 
-       
+        {/* PRICE BADGE */}
+        <span
+          className={`absolute top-4 left-4 px-3 py-1 text-xs rounded-full font-semibold
+            ${item.isFree ? "bg-green-500 text-white" : "bg-primary text-white"}`}
+        >
+          {item.isFree ? "Free" : `${item.price} ${item.currency}`}
+        </span>
 
-          {item.isFree ? (<div className="absolute bottom-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-semibold shadow">
-            Free
-          </div>) : (<div className="absolute bottom-4 left-4 bg-primary/70 text-light-bg px-3 py-1 rounded-full text-xs font-semibold shadow">
-            Price : {item.price} {item.currency}
-
-          </div>)}
-
+        {/* LIKE */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleLike();
+          }}
+          className={`absolute bottom-4 right-4 p-2 rounded-full shadow-lg transition
+            ${
+              isLiked
+                ? "bg-primary text-white"
+                : "bg-white text-primary hover:bg-primary hover:text-white"
+            }
+            ${animating && "scale-125"}`}
+        >
+          <FiHeart size={16} />
+        </button>
       </div>
 
-      {/* Content */}
-      <div className="p-6 space-y-3">
-        {/* Title & Edit */}
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg font-bold text-gray-800 truncate">{item.title}</h2>
+      {/* CONTENT */}
+      <div className="p-5 space-y-3">
+        <h3 className="font-semibold text-lg text-gray-800 truncate">
+          {item.title}
+        </h3>
 
-
-            <div className="flex flex-row-reverse gap-3">
-               {/* Like button */}
-        <button
-          onClick={handleLike}
-          className={` cursor-pointer p-2 rounded-full shadow-lg transition-all duration-300 ${
-            isLiked ? "bg-primary text-white" : "bg-white text-primary hover:bg-primary hover:text-white"
-          } ${animating ? "scale-125" : "scale-100"}`}
-        >
-          <FiHeart size={20} />
-        </button>
-
-        {/* Likes count */}
-        <div className=" flex items-center gap-1 px-3 py-1 bg-white rounded-full shadow text-sm font-medium text-gray-800">
-          {likes.length} {likes.length === 1 ? "Like" : "Likes"}
+        <div className="text-sm text-gray-500 space-y-1">
+          <p className="flex items-center gap-2">
+            <FiCheckCircle /> {item.status}
+          </p>
+          <p className="flex items-center gap-2">
+            <FiBox /> Size: {item.size}
+          </p>
+          <p className="flex items-center gap-2">
+            <FiTag /> {item.condition}
+          </p>
+          <p className="flex items-center gap-2">
+            <FiMapPin /> {item.location}
+          </p>
         </div>
-            </div>
-          {/* edit */}
-          {/* {user?._id === item.giverId && (
-            <button className="text-primary hover:text-primary-dull transition-colors duration-300">
-              <FiEdit size={20} />
+
+        {/* ACTIONS */}
+        <div className="flex gap-2 pt-3">
+          <button
+            onClick={() => navigate(`/clothe-details/${item._id}`)}
+            className="flex-1 bg-primary-dull text-primary rounded-xl py-2 text-sm font-medium hover:bg-primary/20"
+          >
+            Details
+          </button>
+
+          {user?._id === item.giverId ? (
+            <>
+              <button
+                onClick={() =>
+                  navigate(`dashboard/edit-clothe/${item._id}`)
+                }
+                className="flex-1 bg-primary text-white rounded-xl py-2 text-sm hover:bg-primary-dull"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(item._id)}
+                className="flex-1 bg-red-500 text-white rounded-xl py-2 text-sm hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() =>
+                isSelected
+                  ? removeSelectItem(item._id)
+                  : selectItem(item._id)
+              }
+              className={`flex-1 rounded-xl py-2 text-sm font-medium transition
+                ${
+                  isSelected
+                    ? "bg-primary-dull text-primary"
+                    : "bg-primary text-white hover:bg-primary-dull"
+                }`}
+            >
+              {isSelected ? "Remove Item" : "Select Item"}
             </button>
-          )} */}
+          )}
         </div>
-
-        {/* Size & Condition , Location */}
-        <div className="flex flex-wrap gap-3 text-sm text-gray-500">
-          <div className="flex items-center gap-1"><FiBox /> Size :  <span>{item.size}</span></div>
-          <div className="flex items-center gap-1"><FiUser /> Condition : <span>{item.condition}</span></div>
-          <div className="flex items-center gap-1"> <FiMapPin />Location :  <span>{item.location}</span></div>
-        </div>
-            <div className="flex justify-between gap-0.5">
-        <button 
-        onClick={()=>{navigate(`/clothe-details/${item._id}`);scrollTo(0,0)}}
-        className="px-2 py-0.5 rounded-md text-white bg-primary hover:bg-primary-dull cursor-pointer text-sm">Details</button>
-        <button 
-        onClick={()=>selectItem(item._id)}
-        className="px-2 py-0.5 rounded-md text-white bg-primary hover:bg-primary-dull cursor-pointer text-sm">Select Item</button>
-
-
-            </div>
       </div>
     </div>
   );

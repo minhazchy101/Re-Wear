@@ -3,13 +3,14 @@ import { useAppContext } from "../../../context/AppContext";
 import toast from "react-hot-toast";
 
 const Selected = () => {
-  const { user,axios } = useAppContext();
-  const items = user?.selectItems || [];
+  const { axios, navigate, removeSelectItem , selectItems} = useAppContext();
+  const items = selectItems || [];
 
   const orderAdd = async(id,giverId)=>{
     try {
       const res = await axios.post('/add-order', {id, giverId})
       if(res.data.success){
+        navigate('/dashboard/purchasing')
         toast.success(res.data.message)
       }else{
         toast.error(res.data.message)
@@ -18,9 +19,9 @@ const Selected = () => {
       toast.error(error.message)
     }
   }
-
+console.log(items)
   return (
-    <div className="min-h-screen bg-light p-4 md:p-8">
+    <div className="min-h-screen  p-4 md:p-8">
       <h1 className="text-3xl font-bold text-primary mb-6">
         Selected Items
       </h1>
@@ -99,7 +100,9 @@ const Selected = () => {
                     className="px-3 py-1 text-sm rounded-md bg-primary text-white hover:opacity-90">
                       Order
                     </button>
-                    <button className="px-3 py-1 text-sm rounded-md bg-red-100 text-red-600 hover:bg-red-200">
+                    <button
+                     onClick={()=>removeSelectItem(item?._id)}
+                    className="px-3 py-1 text-sm rounded-md bg-red-100 text-red-600 hover:bg-red-200">
                       Cancel
                     </button>
                   </td>

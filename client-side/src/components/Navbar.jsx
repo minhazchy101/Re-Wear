@@ -1,75 +1,85 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { NavLink } from "react-router-dom";
-import { FiMenu, FiX, FiSearch } from "react-icons/fi";
+import {
+  FiMenu,
+  FiX,
+  FiSearch,
+  FiUser,
+  FiLogOut,
+  FiGrid,
+} from "react-icons/fi";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
 const Navbar = () => {
   const { axios, user, setUser, navigate } = useAppContext();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Scroll effect (no height jump)
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  const mobileRef = useRef(null);
+
+  /* Scroll effect */
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll on mobile menu
+  /* Close mobile dropdown on outside click */
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "auto";
-  }, [isMenuOpen]);
+    const handler = (e) => {
+      if (mobileRef.current && !mobileRef.current.contains(e.target)) {
+        setIsMobileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const logout = async () => {
+    try {
+      const res = await axios.get("/logout");
+      if (res.data.success) {
+        setUser(null);
+        toast.success(res.data.message);
+        navigate("/");
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "All Clothes", path: "/allClothes" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
-    { name: "Profile", path: "/profile" },
-    { name: "Dashboard", path: "/dashboard" },
   ];
-
-  const logout = async () => {
-    try {
-      const res = await axios.get("/logout");
-      if (res.data.success) {
-        setUser(null)
-        toast.success(res.data.message);
-        navigate("/");
-      } else {
-        toast.error(res.data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-colors duration-300
-      ${isScrolled ? "bg-white/90 backdrop-blur shadow-sm" : "bg-transparent"}`}
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300
+      ${isScrolled ? "bg-light-bg/10 backdrop-blur-md shadow-sm" : "bg-transparent"}`}
     >
-      <div className="px-6 md:px-16 lg:px-24 xl:px-32 h-16 flex items-center justify-between">
-        
+      <div className="h-16 px-6 md:px-16 lg:px-24 flex items-center justify-between">
         {/* Logo */}
         <NavLink to="/" className="text-2xl font-bold text-primary">
           Re<span className="text-gray-900">Wear</span>
         </NavLink>
 
-        {/* Desktop Nav */}
+        {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(link => (
+          {navLinks.map((link) => (
             <NavLink
               key={link.name}
               to={link.path}
               className={({ isActive }) =>
-                `relative text-md font-medium transition-colors
-                 ${isScrolled ? "text-primary" : "text-primary/80"}
-                 hover:text-primary
-                 after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-full
-                 after:bg-primary after:transition-transform after:duration-300
-                 ${isActive ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}`
+                `relative font-medium transition
+                ${isActive ? "text-primary" : "text-gray-700 hover:text-primary"}
+                after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:bg-primary
+                after:transition-all after:duration-300
+                ${isActive ? "after:w-full" : "after:w-0 hover:after:w-full"}`
               }
             >
               {link.name}
@@ -77,96 +87,109 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Right Actions */}
+        {/* Desktop Right */}
         <div className="hidden md:flex items-center gap-4">
-          <FiSearch
-            className={`text-xl cursor-pointer ${
-              isScrolled ? "text-primary" : "text-primary-dull"
-            }`}
-          />
+          <FiSearch className="text-xl cursor-pointer hover:text-primary" />
 
-          {user ? (
-            <button
-  onClick={logout}
-  className={`px-5 py-2 rounded-full text-md transition
-    ${
-      isScrolled
-        ? "border border-primary text-primary hover:bg-primary/80 hover:text-white"
-        : "bg-primary border border-primary text-white hover:bg-primary/80"
-    }`}
->
-  Logout
-</button>
-
-          ) : (
+          {!user ? (
             <NavLink
               to="/signin"
-              className={({ isActive }) =>
-                `px-6 py-2 rounded-full text-sm font-medium transition
-                ${isActive
-                  ? "bg-primary/80 text-white"
-                  : isScrolled
-                  ? "border border-primary text-primary hover:bg-primary/80 hover:text-white"
-                  : "bg-primary border border-primary text-white hover:bg-primary/80"}`
-              }
+              className="px-6 py-2 bg-primary hover:bg-primary-dull text-white rounded-full text-sm"
             >
-              Signin
+              Sign In
             </NavLink>
+          ) : (
+            <div className="relative group">
+              <FiUser className="text-2xl cursor-pointer" />
+              <ul className="
+                absolute right-2 top-3 mt-3 w-40 bg-white border rounded-lg shadow-lg
+                opacity-0 scale-95 pointer-events-none
+                group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto
+                transition-all
+              ">
+                <li>
+                  <NavLink
+                    to="/profile"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    My Profile
+                  </NavLink>
+                  <NavLink
+                    to="/dashboard"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    My Dashboard
+                  </NavLink>
+                </li>
+                <li className="px-4 py-2">
+                  <button
+                    onClick={logout}
+                    className="w-full bg-primary hover:bg-primary-dull text-white rounded-full py-1.5 text-sm"
+                  >
+                    Sign Out
+                  </button>
+                </li>
+              </ul>
+            </div>
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Button */}
         <button
-          className="md:hidden text-2xl"
-          onClick={() => setIsMenuOpen(true)}
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+          className="md:hidden text-2xl text-primary"
         >
-          <FiMenu className={isScrolled ? "text-primary" : "text-primary-dull"} />
+          {isMobileOpen ? <FiX /> : <FiMenu />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* ---------------- Mobile Dropdown ---------------- */}
       <div
-        className={`fixed inset-0 bg-white flex flex-col items-center justify-center gap-6
-        transition-transform duration-300 md:hidden
-        ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+        ref={mobileRef}
+        className={`md:hidden absolute top-16 left-0 w-full bg-white shadow-lg
+        transition-all duration-300 origin-top
+        ${isMobileOpen ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0"}`}
       >
-        <button
-          className="absolute top-6 right-6 text-2xl"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          <FiX />
-        </button>
+        <div className="flex flex-col items-center gap-5 py-6">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.name}
+              to={link.path}
+              onClick={() => setIsMobileOpen(false)}
+              className="text-lg font-medium"
+            >
+              {link.name}
+            </NavLink>
+          ))}
 
-        {navLinks.map(link => (
-          <NavLink
-            key={link.name}
-            to={link.path}
-            onClick={() => setIsMenuOpen(false)}
-            className={({ isActive }) =>
-              `text-lg font-medium transition
-              ${isActive ? "text-primary underline" : "text-gray-800"}`
-            }
-          >
-            {link.name}
-          </NavLink>
-        ))}
+          <div className="w-4/5 h-px bg-gray-200" />
 
-        {user ? (
-          <button
-            onClick={logout}
-            className="mt-4 bg-primary text-white px-8 py-2.5 rounded-full"
-          >
-            Logout
-          </button>
-        ) : (
-          <NavLink
-            to="/signin"
-            onClick={() => setIsMenuOpen(false)}
-            className="mt-4 bg-primary text-white px-8 py-2.5 rounded-full"
-          >
-            Signin
-          </NavLink>
-        )}
+          {user ? (
+            <>
+              <NavLink
+                to="/my-orders"
+                onClick={() => setIsMobileOpen(false)}
+                className="flex items-center gap-2"
+              >
+                <FiGrid /> My Orders
+              </NavLink>
+              <button
+                onClick={logout}
+                className="px-8 py-2 bg-primary text-white rounded-full"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <NavLink
+              to="/signin"
+              onClick={() => setIsMobileOpen(false)}
+              className="px-8 py-2 bg-primary text-white rounded-full"
+            >
+              Sign In
+            </NavLink>
+          )}
+        </div>
       </div>
     </nav>
   );

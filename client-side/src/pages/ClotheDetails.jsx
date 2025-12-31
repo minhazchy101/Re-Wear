@@ -15,7 +15,7 @@ import toast from 'react-hot-toast'
 
 const ClotheDetails = () => {
   const { id } = useParams()
-  const { clothes, user, axios } = useAppContext()
+  const { clothes, user, axios , selectItem, handleDelete} = useAppContext()
 
   const clothe = clothes.find(item =>  item._id === id)
   const [thumbnail, setThumbnail] = React.useState(clothe?.images?.[0])
@@ -155,7 +155,7 @@ const ClotheDetails = () => {
 
             <div className="flex items-center gap-2 mt-4 text-gray-700">
               <FiPhone />
-              <span className="font-medium">+{clothe.contactNumber}</span>
+              <span className="font-medium">{clothe.contactNumber}</span>
             </div>
           </div>
 
@@ -178,19 +178,19 @@ const ClotheDetails = () => {
                       {likes.length} {likes.length === 1 ? "Like" : "Likes"}
                     </div>
                         </div>
-            {/* <button className="flex-1 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium flex items-center justify-center gap-2 hover:bg-gray-100 transition">
-              <FiHeart />
-              {clothe.likes.length} Likes
-            </button> */}
-
-            {/* <button className="flex-1 py-3 rounded-xl bg-primary text-white font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition">
-               <FiPhone />
-              Contact Seller
-            </button> */}
-            <button className="flex-1 py-3 rounded-xl bg-primary text-white font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition">
-             <FiShoppingBag />
-              Select
-            </button>
+            {user?._id === clothe?.giverId ?(
+            <div className="flex-1 flex gap-2">
+              <button className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Edit</button>
+              <button
+                  onClick={() => handleDelete(clothe._id)}
+              className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Delete</button>
+            </div>
+          ): ( <button
+            onClick={() => selectItem(clothe._id)}
+            className="flex-1 px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition"
+          >
+            Select Item
+          </button>)}
           </div>
 
         </div>

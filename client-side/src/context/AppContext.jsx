@@ -10,17 +10,20 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL ;
 export const AppContext = createContext()
 
 export const AppContextProvider =({children})=>{
-  const navigate = useNavigate()
+  const navigate = useNavigate();scrollTo(0,0)
   const [user, setUser] = useState(null)
   const [clothes, setClothes] = useState([])
+  const [clothesPost, setClothesPost] = useState([])
   const [loading, setLoading] = useState(true)
+   const [selectItems, setSelectItems] = useState([]);
+
 
   const fetchUser = async()=>{
     try {
       const res = await axios.get('/isUser')
-       console.log(res.data.user.clothesPost)
       if(res.data.success) {
         setUser(res.data.user)
+        setClothesPost(res.data.user.clothesPost)
         setLoading(false)
       }else{
          setUser(null)
@@ -33,14 +36,16 @@ export const AppContextProvider =({children})=>{
       
     }
   }
-  console.log('clothes : ', clothes)
+  console.log('clothesPost : ', clothesPost)
 
   const fetchAllClothes = async()=>{
     try {
       const res = await axios.get('/getAllClothes')
-       console.log(res.data)
+      //  console.log(res.data)
       if(res.data.success) {
-        setClothes(res.data.data)
+        const clotheData = res.data.data.filter(clth => clth.status === "Available")
+
+        setClothes(clotheData)
         setLoading(false)
       }else{
          setClothes(null)
@@ -54,13 +59,16 @@ export const AppContextProvider =({children})=>{
     }
   }
 console.log('user => ', user)
+
   const selectItem = async(id)=>{
     if(!user) return toast.error("Please log in to continue.")
     if(user.role === 'sharer') return toast.error("Only Finder can select the item.")
     try {
       const res = await axios.post('/select-item', {id})
+      console.log(res.data.data)
       if (res.data.success) {
-        toast.success(res.data.message)
+          setSelectItems(user?.selectItems)
+          toast.success(res.data.message)
       }
       else{
         toast.error(res.data.message)
@@ -70,6 +78,42 @@ console.log('user => ', user)
     }
   }
 
+  const removeSelectItem = async(id)=>{
+    try {
+      const res = await axios.get(`/remove-select/${id}`)
+       if (res.data.success) {
+        setSelectItems((prev) => prev.filter(o => o._id !== id));
+        toast.success(res.data.message)
+      }
+      else{
+        toast.error(res.data.message)
+      }
+    } catch (error) {
+     toast.error(error.message)
+    }
+  }
+  
+    const handleDelete = async(id)=>{
+      try {
+        const res = await axios.get(`/deleteClothe/${id}`)
+       if (res.data.success) {
+        //  await fetchUser()
+        // await fetchAllClothes()
+         setClothes((prev) => prev.filter((o) => o._id !== id));
+          toast.success(res.data.message)
+        }
+        else{
+          toast.error(res.data.message)
+  
+        }
+      }  catch (error) {
+        toast.error(error.response?.data?.message || "Failed to Delete item");
+      }
+    }
+
+   
+
+
   useEffect(()=>{
     fetchUser()
     fetchAllClothes()
@@ -78,7 +122,11 @@ console.log('user => ', user)
      user, setUser,
       loading, setLoading,
        clothes, setClothes,
-      selectItem,}
+      selectItem, removeSelectItem,   handleDelete,
+    clothesPost, setClothesPost,
+  fetchUser, fetchAllClothes,
+  selectItems, setSelectItems
+}
  return   <AppContext.Provider value={value}>
         {loading ? 'Loading...' : children}
     </AppContext.Provider>

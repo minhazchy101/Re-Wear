@@ -18,7 +18,7 @@ const orderSchema = mongoose.Schema({
   },
   status :
   {
-    type : String , default : 'Pending' , enum: ["Pending", "Confirm", "Received"],
+    type : String , default : 'Pending' , enum: ["Pending", "Confirmed"],
   }
 },{
     timestamps: true

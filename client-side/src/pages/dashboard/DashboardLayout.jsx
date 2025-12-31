@@ -7,6 +7,7 @@ import {
   FaPlusCircle,
   FaBoxOpen,
   FaShoppingBag,
+  FaList,
 } from "react-icons/fa";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
@@ -39,7 +40,7 @@ const DashboardLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen flex">
       {/* Sidebar (Desktop) */}
       <aside className="hidden md:flex w-64 bg-white border-r shadow-lg flex-col transition-all duration-300">
         <SidebarContent user={user} navLinkClass={navLinkClass} />
@@ -144,6 +145,14 @@ const SidebarContent = ({ user, navLinkClass, onClick }) => {
           >
             <FaShoppingBag className="text-xl" />
             Clothes Workflow
+          </NavLink>
+          <NavLink
+            to="/dashboard/my-clothes"
+            className={navLinkClass}
+            onClick={onClick}
+          >
+            <FaList className="text-xl" />
+          My  Clothes
           </NavLink>
         </div>
       )}
