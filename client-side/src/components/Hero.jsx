@@ -27,7 +27,7 @@ const Hero = () => {
 
         {/* CTA Buttons */}
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          <button className="px-8 py-3 rounded-full bg-primary hover:bg-primary-dull transition font-medium">
+          <button className="px-8 py-3 btn-primary rounded-full">
             Donate Clothes
           </button>
           <button className="px-8 py-3 rounded-full border border-white hover:bg-white hover:text-black transition font-medium">

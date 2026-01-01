@@ -9,10 +9,10 @@ import {
   FiGrid,
 } from "react-icons/fi";
 import { useAppContext } from "../context/AppContext";
-import toast from "react-hot-toast";
+
 
 const Navbar = () => {
-  const { axios, user, setUser, navigate } = useAppContext();
+  const { user, logout } = useAppContext();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -37,18 +37,7 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const logout = async () => {
-    try {
-      const res = await axios.get("/logout");
-      if (res.data.success) {
-        setUser(null);
-        toast.success(res.data.message);
-        navigate("/");
-      }
-    } catch (err) {
-      toast.error(err.message);
-    }
-  };
+  
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -64,7 +53,7 @@ const Navbar = () => {
     >
       <div className="h-16 px-6 md:px-16 lg:px-24 flex items-center justify-between">
         {/* Logo */}
-        <NavLink to="/" className="text-2xl font-bold text-primary">
+        <NavLink to="/" className="text-2xl font-bold text-primary hover:scale-110 transition-all duration-300 ease-in-out">
           Re<span className="text-gray-900">Wear</span>
         </NavLink>
 
@@ -75,10 +64,10 @@ const Navbar = () => {
               key={link.name}
               to={link.path}
               className={({ isActive }) =>
-                `relative font-medium transition
+                `relative font-medium transition hover:scale-105
                 ${isActive ? "text-primary" : "text-gray-700 hover:text-primary"}
                 after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:bg-primary
-                after:transition-all after:duration-300
+                after:transition-all after:duration-300 ease-in-out
                 ${isActive ? "after:w-full" : "after:w-0 hover:after:w-full"}`
               }
             >
@@ -89,18 +78,25 @@ const Navbar = () => {
 
         {/* Desktop Right */}
         <div className="hidden md:flex items-center gap-4">
-          <FiSearch className="text-xl cursor-pointer hover:text-primary" />
+          {/* <FiSearch className="text-xl cursor-pointer hover:text-primary" /> */}
 
           {!user ? (
             <NavLink
               to="/signin"
-              className="px-6 py-2 bg-primary hover:bg-primary-dull text-white rounded-full text-sm"
+              className="btn-primary py-1 px-6"
             >
               Sign In
             </NavLink>
           ) : (
+            <div className="flex flex-row-reverse items-center gap-4">
+               <button
+                    onClick={logout}
+                    className="btn-primary py-1 px-6"
+                  >
+                    Sign Out
+                  </button>
             <div className="relative group">
-              <FiUser className="text-2xl cursor-pointer" />
+              <FiUser className="text-2xl cursor-pointer text-primary hover:text-white transition-all duration-300 ease-in-out transform hover:bg-primary-dull hover:scale-110 hover:shadow-lg rounded-full" />
               <ul className="
                 absolute right-2 top-3 mt-3 w-40 bg-white border rounded-lg shadow-lg
                 opacity-0 scale-95 pointer-events-none
@@ -121,15 +117,9 @@ const Navbar = () => {
                     My Dashboard
                   </NavLink>
                 </li>
-                <li className="px-4 py-2">
-                  <button
-                    onClick={logout}
-                    className="w-full bg-primary hover:bg-primary-dull text-white rounded-full py-1.5 text-sm"
-                  >
-                    Sign Out
-                  </button>
-                </li>
+                
               </ul>
+            </div>
             </div>
           )}
         </div>
@@ -150,12 +140,14 @@ const Navbar = () => {
         transition-all duration-300 origin-top
         ${isMobileOpen ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0"}`}
       >
-        <div className="flex flex-col items-center gap-5 py-6">
+        <div
+        onClick={() => setIsMobileOpen(false)}
+        className="flex flex-col items-center gap-5 py-6">
           {navLinks.map((link) => (
             <NavLink
               key={link.name}
               to={link.path}
-              onClick={() => setIsMobileOpen(false)}
+           
               className="text-lg font-medium"
             >
               {link.name}
@@ -165,17 +157,24 @@ const Navbar = () => {
           <div className="w-4/5 h-px bg-gray-200" />
 
           {user ? (
-            <>
-              <NavLink
-                to="/my-orders"
-                onClick={() => setIsMobileOpen(false)}
-                className="flex items-center gap-2"
-              >
-                <FiGrid /> My Orders
-              </NavLink>
+            <> 
+             <NavLink
+          
+                    to="/profile"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    My Profile
+                  </NavLink>
+                  <NavLink
+               
+                    to="/dashboard"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    My Dashboard
+                  </NavLink>
               <button
                 onClick={logout}
-                className="px-8 py-2 bg-primary text-white rounded-full"
+                className="px-8 py-2 btn-primary"
               >
                 Logout
               </button>
@@ -183,8 +182,8 @@ const Navbar = () => {
           ) : (
             <NavLink
               to="/signin"
-              onClick={() => setIsMobileOpen(false)}
-              className="px-8 py-2 bg-primary text-white rounded-full"
+           
+              className="px-8 py-2 btn-primary"
             >
               Sign In
             </NavLink>

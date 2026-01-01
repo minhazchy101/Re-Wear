@@ -15,17 +15,21 @@ import toast from 'react-hot-toast'
 
 const ClotheDetails = () => {
   const { id } = useParams()
-  const { clothes, user, axios , selectItem, handleDelete} = useAppContext()
+  const { clothes, user, axios , selectItem, removeSelectItem, handleDelete, navigate, selectItems} = useAppContext()
 
   const clothe = clothes.find(item =>  item._id === id)
   const [thumbnail, setThumbnail] = React.useState(clothe?.images?.[0])
 
-  const [likes, setLikes] = useState( clothe.likes || []);
+  const [likes, setLikes] = useState( clothe?.likes || []);
 
   const [animating, setAnimating] = useState(false);
 
  
-  const isLiked = user ? likes.includes(user._id) : false;
+    const isLiked = user ? likes?.includes(user._id) : false;
+   const isSelected = selectItems?.some(
+  it => it.toString() === clothe._id.toString()
+);
+
 
   const handleLike = async () => {
     if (!user) {
@@ -34,7 +38,7 @@ const ClotheDetails = () => {
     }
 
     try {
-      const res = await axios.get(`/like/${ clothe._id}`);
+      const res = await axios.get(`/like/${ clothe?._id}`);
       if (res.data.success) {
       
         setLikes(res.data.likes || []);
@@ -69,7 +73,7 @@ const ClotheDetails = () => {
         <div className="flex gap-4">
           {/* Thumbnails */}
           <div className="flex flex-col gap-3">
-            {clothe.images.map((img, index) => (
+            {clothe?.images.map((img, index) => (
               <button
                 key={index}
                 onClick={() => setThumbnail(img)}
@@ -89,7 +93,7 @@ const ClotheDetails = () => {
           <div className="flex-1 bg-gray-100 rounded-2xl overflow-hidden">
             <img
               src={thumbnail}
-              alt={clothe.title}
+              alt={clothe?.title}
               className="w-full h-[520px] object-cover"
             />
           </div>
@@ -100,37 +104,37 @@ const ClotheDetails = () => {
 
           {/* Title */}
           <h1 className="text-3xl font-bold text-gray-900">
-            {clothe.title}
+            {clothe?.title}
           </h1>
 
           {/* Price */}
           <div className="mt-4 flex items-center gap-4">
-            {clothe.isFree ? (
+            {clothe?.isFree ? (
               <span className="px-4 py-1 rounded-full bg-green-100 text-green-700 font-semibold">
                 Free
               </span>
             ) : (
               <p className="text-4xl font-extrabold text-primary">
-                {clothe.price} {clothe.currency}
+                {clothe?.price} {clothe?.currency}
               </p>
             )}
 
             <span className="text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-600">
-              {clothe.condition}
+              {clothe?.condition}
             </span>
           </div>
 
           {/* Description */}
           <p className="mt-6 text-gray-600 leading-relaxed">
-            {clothe.description}
+            {clothe?.description}
           </p>
 
           {/* META GRID */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
-            <Info icon={<FiBox />} label="Category" value={clothe.category} />
-            <Info icon={<FiTag />} label="Size" value={clothe.size} />
-            <Info icon={<FiMapPin />} label="Location" value={clothe.location} />
-            <Info icon={<FiBox />} label="Status" value={clothe.status} />
+            <Info icon={<FiBox />} label="Category" value={clothe?.category} />
+            <Info icon={<FiTag />} label="Size" value={clothe?.size} />
+            <Info icon={<FiMapPin />} label="Location" value={clothe?.location} />
+            <Info icon={<FiBox />} label="Status" value={clothe?.status} />
           </div>
 
           {/* SELLER CARD */}
@@ -144,18 +148,18 @@ const ClotheDetails = () => {
 
               <div>
                 <p className="font-semibold text-gray-800">
-                  {clothe.giverName}
+                  {clothe?.giverName}
                 </p>
                 <p className="text-sm text-gray-600 flex items-center gap-2">
                   <FiMail />
-                  {clothe.giverEmail}
+                  {clothe?.giverEmail}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 mt-4 text-gray-700">
               <FiPhone />
-              <span className="font-medium">{clothe.contactNumber}</span>
+              <span className="font-medium">{clothe?.contactNumber}</span>
             </div>
           </div>
 
@@ -180,17 +184,30 @@ const ClotheDetails = () => {
                         </div>
             {user?._id === clothe?.giverId ?(
             <div className="flex-1 flex gap-2">
-              <button className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Edit</button>
               <button
-                  onClick={() => handleDelete(clothe._id)}
+              
+               onClick={() =>
+                  navigate(`dashboard/edit-clothe/${clothe?._id}`)
+                }className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Edit</button>
+              <button
+                  onClick={() => handleDelete(clothe?._id)}
               className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Delete</button>
             </div>
-          ): ( <button
-            onClick={() => selectItem(clothe._id)}
-            className="flex-1 px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition"
-          >
-            Select Item
-          </button>)}
+          ): (   <button
+              onClick={() =>
+                isSelected
+                  ? removeSelectItem(clothe?._id)
+                  : selectItem(clothe?._id)
+              }
+              className={`flex-1 btn-primary py-2
+                ${
+                  isSelected
+                    ? "bg-primary-dull text-white"
+                    : "bg-primary text-white hover:bg-primary-dull"
+                }`}
+            >
+              {isSelected ? "Remove Item" : "Select Item"}
+            </button>)}
           </div>
 
         </div>

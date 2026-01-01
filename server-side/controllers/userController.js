@@ -58,7 +58,25 @@ export const signin = async (req, res)=>{
        
   const token = jwt.sign({id : user._id}, `${process.env.JWT_SECRET}`);
   res.cookie('token', token)
-  res.send({success : true, message: 'Welcome back! You’re sign in.', user})
+   const populatedUser = await user.populate([
+  {
+    path: "clothesPost",
+    options: { sort: { createdAt: -1 } }
+  },
+  {
+    path: "selectItems",
+    options: { sort: { createdAt: -1 } }
+  },
+  {
+    path: "orderItems",
+    options: { sort: { createdAt: -1 } }
+  },
+]);
+
+    const clothesPost = populatedUser.clothesPost; 
+    const selectItems = populatedUser.selectItems; 
+    const orderItems = populatedUser.orderItems; 
+  res.send({success : true, message: 'Welcome back! You’re sign in.', user, selectItems, clothesPost, orderItems})
 
   } catch (error) {
      res.send({success : false, message: `Sign In failed for : ${error}`})
@@ -82,8 +100,12 @@ export const isUser = async(req, res)=>{
     options: { sort: { createdAt: -1 } }
   },
 ]);
-
-   res.send({success : true, user})
+const clothesPost = user.clothesPost ;
+const selectItems = user.selectItems ;
+const orderItems = user.orderItems ;
+   res.send({success : true, user, clothesPost,
+selectItems,
+orderItems})
   } catch (error) {
      res.send({success : false, message: `User not Found for : ${error}`})
   }
@@ -99,20 +121,35 @@ export const logout = async (req, res)=>{
 }
 
 
-export const selectItems =async (req, res)=>{
-  const takerId =  req.takerId ;
-  const itemsId =  req.body.id ;
- 
+export const selectItems = async (req, res) => {
+  const takerId = req.takerId;
+  const itemsId = req.body.id;
+
   try {
-    const clothe = await Clothe.findOne({_id : itemsId})
-    const user = await User.findOne({_id : takerId})
-    user.selectItems.push(clothe._id)
-    await user.save()
-    res.send({ success: true, message: "Item has been selected successfully!" });
+    const clothe = await Clothe.findOne({ _id: itemsId });
+    const user = await User.findOne({ _id: takerId });
+    
+    if (!user || !clothe) {
+      return res.status(404).json({ success: false, message: "User or Clothe not found." });
+    }
+
+    
+    user.selectItems.push(clothe._id);
+    await user.save();
+
+ 
+    const populatedUser = await User.findOne({ _id: takerId }).populate({
+      path: "selectItems",
+       options: { sort: { createdAt: -1 } }
+    });
+
+    const selectItems = populatedUser.selectItems; 
+    
+    res.send({ success: true, message: "Item has been selected successfully!", selectItems });
   } catch (error) {
-      res.send({success : false, message: `Select items failed for : ${error}`})
+    res.send({ success: false, message: `Select items failed for: ${error.message}` });
   }
-}
+};
 
 
 

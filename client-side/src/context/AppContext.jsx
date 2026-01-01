@@ -10,20 +10,37 @@ axios.defaults.baseURL = import.meta.env.VITE_BASE_URL ;
 export const AppContext = createContext()
 
 export const AppContextProvider =({children})=>{
-  const navigate = useNavigate();scrollTo(0,0)
+  const navigate = useNavigate();
   const [user, setUser] = useState(null)
   const [clothes, setClothes] = useState([])
   const [clothesPost, setClothesPost] = useState([])
   const [loading, setLoading] = useState(true)
    const [selectItems, setSelectItems] = useState([]);
 
+   console.log("selectItems => ", selectItems)
+
+  const logout = async () => {
+      try {
+        const res = await axios.get("/logout");
+        if (res.data.success) {
+          setSelectItems(null);
+          setUser(null);
+          toast.success(res.data.message);
+          navigate("/");
+        }
+      } catch (err) {
+        toast.error(err.message);
+      }
+    };
 
   const fetchUser = async()=>{
     try {
       const res = await axios.get('/isUser')
       if(res.data.success) {
         setUser(res.data.user)
-        setClothesPost(res.data.user.clothesPost)
+        setClothesPost(res.data.clothesPost)
+        setSelectItems(res.data.selectItems);
+      //  console.log(res.data.selectItems)
         setLoading(false)
       }else{
          setUser(null)
@@ -36,7 +53,7 @@ export const AppContextProvider =({children})=>{
       
     }
   }
-  console.log('clothesPost : ', clothesPost)
+  // console.log('clothesPost : ', clothesPost)
 
   const fetchAllClothes = async()=>{
     try {
@@ -58,16 +75,16 @@ export const AppContextProvider =({children})=>{
       
     }
   }
-console.log('user => ', user)
+console.log('selectItems => ', selectItems)
 
   const selectItem = async(id)=>{
     if(!user) return toast.error("Please log in to continue.")
     if(user.role === 'sharer') return toast.error("Only Finder can select the item.")
     try {
       const res = await axios.post('/select-item', {id})
-      console.log(res.data.data)
+   
       if (res.data.success) {
-          setSelectItems(user?.selectItems)
+         setSelectItems(res.data.selectItems);
           toast.success(res.data.message)
       }
       else{
@@ -77,12 +94,13 @@ console.log('user => ', user)
      toast.error(error.message)
     }
   }
-
+ 
   const removeSelectItem = async(id)=>{
     try {
       const res = await axios.get(`/remove-select/${id}`)
+     
        if (res.data.success) {
-        setSelectItems((prev) => prev.filter(o => o._id !== id));
+       setSelectItems((prev) => prev.filter((o) => o._id !== id));
         toast.success(res.data.message)
       }
       else{
@@ -125,7 +143,7 @@ console.log('user => ', user)
       selectItem, removeSelectItem,   handleDelete,
     clothesPost, setClothesPost,
   fetchUser, fetchAllClothes,
-  selectItems, setSelectItems
+  selectItems, setSelectItems, logout
 }
  return   <AppContext.Provider value={value}>
         {loading ? 'Loading...' : children}

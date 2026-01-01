@@ -132,7 +132,7 @@ export const like = async (req, res) => {
 
     await clothe.save();
 
-    console.log("Clothe after update:", clothe);
+
 
     return res.status(200).json({ success: true, likes: clothe.likes });
   } catch (error) {

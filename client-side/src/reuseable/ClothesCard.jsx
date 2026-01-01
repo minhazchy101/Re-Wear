@@ -17,9 +17,11 @@ const ClothesCard = ({ item }) => {
   const [animating, setAnimating] = useState(false);
 
   const isLiked = user ? likes.includes(user._id) : false;
-const isSelected = selectItems?.some(selectedItem => selectedItem._id === item._id);
+ const isSelected = selectItems?.some(
+  (it) => it._id.toString() === item._id.toString()
+);
 
-  const handleLike = async () => {
+ const handleLike = async () => {
     if (!user) return toast.error("Login to like items!");
     try {
       const res = await axios.get(`/like/${item._id}`);
@@ -27,9 +29,10 @@ const isSelected = selectItems?.some(selectedItem => selectedItem._id === item._
         setLikes(res.data.likes || []);
         setAnimating(true);
         setTimeout(() => setAnimating(false), 300);
+        toast.success(isLiked ? "Like removed" : "Liked!");
       }
-    } catch {
-      toast.error("Failed to like item");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to like item");
     }
   };
 
@@ -38,38 +41,53 @@ const isSelected = selectItems?.some(selectedItem => selectedItem._id === item._
       {/* IMAGE */}
       <div
         onClick={() => navigate(`/clothe-details/${item._id}`)}
-        className="relative cursor-pointer group"
+        className="relative cursor-pointer group overflow-hidden"
       >
         <img
           src={item.images[0]}
           alt={item.title}
-          className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-108"
         />
 
         {/* PRICE BADGE */}
         <span
-          className={`absolute top-4 left-4 px-3 py-1 text-xs rounded-full font-semibold
+          className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold
             ${item.isFree ? "bg-green-500 text-white" : "bg-primary text-white"}`}
         >
           {item.isFree ? "Free" : `${item.price} ${item.currency}`}
         </span>
 
-        {/* LIKE */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleLike();
-          }}
-          className={`absolute bottom-4 right-4 p-2 rounded-full shadow-lg transition
-            ${
-              isLiked
-                ? "bg-primary text-white"
-                : "bg-white text-primary hover:bg-primary hover:text-white"
-            }
-            ${animating && "scale-125"}`}
-        >
-          <FiHeart size={16} />
-        </button>
+        {/* LIKE BUTTON + COUNT */}
+        <div className="absolute bottom-3 right-3 flex items-center gap-2 bg-white/90 px-2 py-1 rounded-xl shadow z-10">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLike();
+            }}
+            className={`p-2 rounded-full transition-all duration-300
+              ${
+                isLiked
+                  ? "bg-primary text-white"
+                  : "bg-white text-primary hover:bg-primary hover:text-white"
+              }
+              ${animating ? "scale-125" : "scale-100"}`}
+          >
+            <FiHeart size={14} />
+          </button>
+
+          <span className="text-xs font-medium text-primary whitespace-nowrap">
+            {likes.length} {likes.length === 1 ? "Like" : "Likes"}
+          </span>
+        </div>
+
+        {/* SELECTED OVERLAY */}
+        {isSelected && (
+          <div className="absolute inset-0 bg-primary-dull/30 flex items-center justify-center">
+            <span className="text-white font-semibold text-lg">
+              Selected
+            </span>
+          </div>
+        )}
       </div>
 
       {/* CONTENT */}
@@ -80,13 +98,13 @@ const isSelected = selectItems?.some(selectedItem => selectedItem._id === item._
 
         <div className="text-sm text-gray-500 space-y-1">
           <p className="flex items-center gap-2">
-            <FiCheckCircle /> {item.status}
+            <FiCheckCircle /> Status: {item.status}
           </p>
           <p className="flex items-center gap-2">
             <FiBox /> Size: {item.size}
           </p>
           <p className="flex items-center gap-2">
-            <FiTag /> {item.condition}
+            <FiTag /> Condition: {item.condition}
           </p>
           <p className="flex items-center gap-2">
             <FiMapPin /> {item.location}
@@ -97,7 +115,7 @@ const isSelected = selectItems?.some(selectedItem => selectedItem._id === item._
         <div className="flex gap-2 pt-3">
           <button
             onClick={() => navigate(`/clothe-details/${item._id}`)}
-            className="flex-1 bg-primary-dull text-primary rounded-xl py-2 text-sm font-medium hover:bg-primary/20"
+            className="flex-1 btn-primary py-2 px-1"
           >
             Details
           </button>
@@ -108,7 +126,7 @@ const isSelected = selectItems?.some(selectedItem => selectedItem._id === item._
                 onClick={() =>
                   navigate(`dashboard/edit-clothe/${item._id}`)
                 }
-                className="flex-1 bg-primary text-white rounded-xl py-2 text-sm hover:bg-primary-dull"
+                className="flex-1 btn-primary py-2 px-1"
               >
                 Edit
               </button>
@@ -126,10 +144,10 @@ const isSelected = selectItems?.some(selectedItem => selectedItem._id === item._
                   ? removeSelectItem(item._id)
                   : selectItem(item._id)
               }
-              className={`flex-1 rounded-xl py-2 text-sm font-medium transition
+              className={`flex-1 btn-primary py-2 px-1
                 ${
                   isSelected
-                    ? "bg-primary-dull text-primary"
+                    ? "bg-primary-dull text-white"
                     : "bg-primary text-white hover:bg-primary-dull"
                 }`}
             >

@@ -53,8 +53,8 @@ export const removeSelect = async (req, res) => {
     console.log(index)
     taker.selectItems.splice(index, 1);
     await taker.save();
-
-    res.json({ success: true, message: "Item removed from selection." });
+    const selectItems = taker.selectItems ;
+    res.json({ success: true, message: "Item removed from selection.", selectItems });
   } catch (error) {
     console.log("Remove Select error =>", error.message);
     res.status(500).json({ success: false, message: "Server error." });

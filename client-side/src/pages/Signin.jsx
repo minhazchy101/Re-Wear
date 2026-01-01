@@ -6,7 +6,7 @@ import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
 export default function Signin() {
-  const {axios, navigate,setUser} = useAppContext()
+  const {axios, navigate,setUser, setSelectItems, setClothesPost} = useAppContext()
   const {
     register,
     handleSubmit,
@@ -17,14 +17,15 @@ export default function Signin() {
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async(data) => {
-    console.log("Signin Data:", data);
-    // 🔗 connect API here
     try {
       const res = await axios.post('/signin', data)
       console.log(res.data)
+
       if(res.data.success){
         reset()
         setUser(res.data.user)
+        setSelectItems(res.data.selectItems)
+        setClothesPost(res.data.clothesPost)
        toast.success(res.data.message)
        navigate('/')
       } else{

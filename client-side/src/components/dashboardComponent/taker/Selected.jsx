@@ -3,8 +3,11 @@ import { useAppContext } from "../../../context/AppContext";
 import toast from "react-hot-toast";
 
 const Selected = () => {
-  const { axios, navigate, removeSelectItem , selectItems} = useAppContext();
-  const items = selectItems || [];
+  const { axios, navigate, removeSelectItem , selectItems, clothes, loading} = useAppContext();
+ const items = selectItems;
+
+console.log("selectItems => ", selectItems)
+console.log("clothes => ", clothes)
 
   const orderAdd = async(id,giverId)=>{
     try {
@@ -19,14 +22,21 @@ const Selected = () => {
       toast.error(error.message)
     }
   }
-console.log(items)
+
+if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-gray-500">Loading selected items...</p>
+    </div>
+  );
+}
   return (
     <div className="min-h-screen  p-4 md:p-8">
       <h1 className="text-3xl font-bold text-primary mb-6">
-        Selected Items
+        Selected Items: {items.length} 
       </h1>
 
-      {items.length === 0 ? (
+      {!loading && items.length === 0  ? (
         <p className="text-gray-500 text-center py-20">
           No selected items found.
         </p>
@@ -47,7 +57,7 @@ console.log(items)
 
             {/* Table Body */}
             <tbody className="divide-y">
-              {items.map((item) => (
+              {items?.map((item) => (
                 <tr
                   key={item._id}
                   className="hover:bg-gray-50 transition"

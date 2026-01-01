@@ -8,14 +8,20 @@
    --color-borderColor : #c4c7d2 ;
 }
 
-@layer components{
-     .title{
-  @apply text-3xl md:text-6xl font-bold text-primary
-}
-.sub-title{
-  @apply text-xl md:text-2xl mt-5 text-slate-800
-}
-.text{
-  @apply text-xl md:text-2xl mt-5 text-slate-600
-}
+@layer components {
+  .title {
+    @apply text-3xl md:text-6xl font-bold text-primary;
+  }
+
+  .sub-title {
+    @apply text-xl md:text-2xl mt-5 text-slate-800;
+  }
+
+  .text {
+    @apply text-xl md:text-2xl mt-5 text-slate-600;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white rounded-lg text-lg font-semibold hover:bg-primary-dull focus:outline-none focus:ring-2 focus:ring-borderColor disabled:bg-light-bg disabled:cursor-not-allowed transition-all duration-200 ease-in-out cursor-pointer hover:scale-108;
+  }
 }

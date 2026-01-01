@@ -1,6 +1,7 @@
 import React from "react";
 import { useAppContext } from "../context/AppContext";
 import ClothesCard from "../reuseable/clothesCard";
+import { Link } from "react-router-dom";
 
 const RecentlyAdded = () => {
   const { clothes } = useAppContext();
@@ -23,9 +24,9 @@ const RecentlyAdded = () => {
 
       {clothes?.length > 0 && (
         <div className="flex justify-center mt-10">
-          <button className="px-8 py-3 rounded-full bg-primary text-white font-medium hover:bg-primary-dull transition">
+          <Link to={"/allClothes"} className="px-8 py-3 rounded-full btn-primary">
             View All
-          </button>
+          </Link>
         </div>
       )}
     </section>
