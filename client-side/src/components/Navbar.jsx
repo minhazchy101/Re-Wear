@@ -12,7 +12,7 @@ import { useAppContext } from "../context/AppContext";
 
 
 const Navbar = () => {
-  const { user, logout } = useAppContext();
+  const { user, logout, navigate } = useAppContext();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -96,7 +96,9 @@ const Navbar = () => {
                     Sign Out
                   </button>
             <div className="relative group">
-              <FiUser className="text-2xl cursor-pointer text-primary hover:text-white transition-all duration-300 ease-in-out transform hover:bg-primary-dull hover:scale-110 hover:shadow-lg rounded-full" />
+              <FiUser
+              onClick={()=>{navigate("/dashboard");scrollTo(0,0)}}
+              className="text-2xl cursor-pointer text-primary transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-lg rounded-full" />
               <ul className="
                 absolute right-2 top-3 mt-3 w-40 bg-white border rounded-lg shadow-lg
                 opacity-0 scale-95 pointer-events-none

@@ -80,6 +80,9 @@ console.log('selectItems => ', selectItems)
   const selectItem = async(id)=>{
     if(!user) return toast.error("Please log in to continue.")
     if(user.role === 'sharer') return toast.error("Only Finder can select the item.")
+   if (selectItems.some(item => item.id === id)) {
+  return toast.error("Already Added");
+}
     try {
       const res = await axios.post('/select-item', {id})
    

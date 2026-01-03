@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import {
   FaBars,
@@ -16,13 +16,25 @@ const DashboardLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, axios, setUser, navigate } = useAppContext();
 
+ 
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   const navLinkClass = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 rounded-lg text-md font-medium transition-all duration-300
-     ${
-       isActive
-         ? "bg-primary text-white shadow-lg"
-         : "text-gray-600 hover:bg-primary hover:text-white"
-     }`;
+    `
+    relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium
+    transition-all duration-200
+    ${
+      isActive
+        ? "bg-primary/10 text-primary before:absolute before:left-0 before:top-2 before:bottom-2 before:w-1 before:bg-primary before:rounded-r"
+        : "text-gray-600 hover:bg-gray-100"
+    }
+  `;
 
   const logout = async () => {
     try {
@@ -40,71 +52,71 @@ const DashboardLayout = () => {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar (Desktop) */}
-      <aside className="hidden md:flex w-64 bg-white border-r shadow-lg flex-col transition-all duration-300">
-        <SidebarContent user={user} navLinkClass={navLinkClass} />
+    <div className="h-screen flex bg-gray-50 overflow-hidden">
+      {/* ===== Desktop Sidebar ===== */}
+      <aside className="fixed md:static z-40 h-full hidden md:flex w-64 bg-white border-r shadow-sm flex-col">
+        <SidebarContent
+          user={user}
+          navLinkClass={navLinkClass}
+          logout={logout}
+        />
       </aside>
 
-      {/* Mobile Sidebar Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+      {/* ===== Mobile Overlay ===== */}
+      <div
+        className={`
+          fixed inset-0 z-40 bg-black/40 backdrop-blur-sm
+          transition-opacity duration-300 md:hidden
+          ${mobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"}
+        `}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+
+      {/* ===== Mobile Sidebar ===== */}
+      <aside
+        className={`
+          fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-2xl
+          transform transition-transform duration-300 ease-in-out md:hidden
+          ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
+        `}
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b">
+          <h1 className="text-2xl font-bold text-primary">
+            Re<span className="text-gray-900">Wear</span>
+          </h1>
+          <button
             onClick={() => setMobileMenuOpen(false)}
-          />
-
-          {/* Sidebar */}
-          <aside className="relative w-64 h-full bg-white shadow-xl z-50 transform transition-transform duration-300">
-            <div className="flex justify-between items-center px-6 py-4 border-b">
-              <h1 className="text-2xl font-bold text-primary">
-                Re<span className="text-gray-900">Wear</span>
-              </h1>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-gray-600 hover:text-primary transition-colors duration-300"
-              >
-                <FaTimes size={20} />
-              </button>
-            </div>
-
-            <SidebarContent
-              user={user}
-              navLinkClass={navLinkClass}
-              onClick={() => setMobileMenuOpen(false)}
-            />
-          </aside>
+            className="text-gray-600 hover:text-primary"
+          >
+            <FaTimes size={20} />
+          </button>
         </div>
-      )}
 
-      {/* Main Content */}
+        <SidebarContent
+          user={user}
+          navLinkClass={navLinkClass}
+          logout={logout}
+          onNavigate={() => setMobileMenuOpen(false)}
+        />
+      </aside>
+
+      {/* ===== Main Area ===== */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="bg-white px-6 py-4 shadow-sm flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden text-gray-600 hover:text-primary transition-colors duration-300"
-              onClick={() => setMobileMenuOpen(true)}
-            >
-              <FaBars size={22} />
-            </button>
-
-            <h2 className="text-lg font-semibold text-gray-800">
-              Welcome{" "}
-              <span className="text-primary capitalize">{user?.role}</span>
-            </h2>
-          </div>
-
-          {/* Logout */}
+        <header className="bg-white px-6 py-4 shadow-sm flex items-center gap-4">
           <button
-            onClick={logout}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-primary-dull text-light-bg hover:bg-primary hover:text-white shadow-md transition-all duration-300"
+            className="md:hidden text-gray-600 hover:text-primary"
+            onClick={() => setMobileMenuOpen(true)}
           >
-            <FaSignOutAlt />
-            Logout
+            <FaBars size={22} />
           </button>
+
+          <h2 className="text-lg font-semibold text-gray-800">
+            Dashboard
+            <span className="ml-2 text-sm text-gray-500 capitalize">
+              ({user?.role})
+            </span>
+          </h2>
         </header>
 
         {/* Page Content */}
@@ -118,62 +130,98 @@ const DashboardLayout = () => {
 
 export default DashboardLayout;
 
-/* Sidebar Content Component */
-const SidebarContent = ({ user, navLinkClass, onClick }) => {
+/* ================= Sidebar Content ================= */
+
+const SidebarContent = ({
+  user,
+  navLinkClass,
+  logout,
+  onNavigate = () => {},
+}) => {
   return (
-    <nav className="px-4 py-6 space-y-6">
-      <div className="flex justify-center mb-6">
-        <NavLink
-          to="/"
-          className="text-3xl font-extrabold text-primary hover:text-primary-darker transition-colors duration-300"
-        >
-          Re<span className="text-gray-900">Wear</span>
-        </NavLink>
+    <nav className="px-4 py-6 flex flex-col h-screen">
+      {/* Top Section */}
+      <div>
+        <div className="flex justify-center mb-8">
+          <NavLink
+            to="/"
+            className="text-3xl font-extrabold text-primary"
+            onClick={onNavigate}
+          >
+            Re<span className="text-gray-900">Wear</span>
+          </NavLink>
+        </div>
+
+        {user?.role === "sharer" && (
+          <div className="space-y-2">
+            <NavLink
+             end
+              to="/dashboard"
+              className={navLinkClass}
+              onClick={onNavigate}
+            >
+              <FaPlusCircle className="text-lg opacity-80" />
+              Add Clothes
+            </NavLink>
+
+            <NavLink
+              to="/dashboard/workflow"
+              className={navLinkClass}
+              onClick={onNavigate}
+            >
+              <FaShoppingBag className="text-lg opacity-80" />
+              Clothes Workflow
+            </NavLink>
+
+            <NavLink
+              to="/dashboard/my-clothes"
+              className={navLinkClass}
+              onClick={onNavigate}
+            >
+              <FaList className="text-lg opacity-80" />
+              My Clothes
+            </NavLink>
+          </div>
+        )}
+
+        {user?.role === "finder" && (
+          <div className="space-y-2">
+            <NavLink
+             end
+              to="/dashboard"
+              className={navLinkClass}
+              onClick={onNavigate}
+            >
+              <FaShoppingBag className="text-lg opacity-80" />
+              Clothes Selected
+            </NavLink>
+
+            <NavLink
+              to="/dashboard/purchasing"
+              className={navLinkClass}
+              onClick={onNavigate}
+            >
+              <FaBoxOpen className="text-lg opacity-80" />
+              Purchasing Clothes
+            </NavLink>
+          </div>
+        )}
       </div>
 
-      {user?.role === "sharer" && (
-        <div className="space-y-3">
-          <NavLink to="/dashboard" className={navLinkClass} onClick={onClick}>
-            <FaPlusCircle className="text-xl" />
-            Add Clothes
-          </NavLink>
-
-          <NavLink
-            to="/dashboard/workflow"
-            className={navLinkClass}
-            onClick={onClick}
-          >
-            <FaShoppingBag className="text-xl" />
-            Clothes Workflow
-          </NavLink>
-          <NavLink
-            to="/dashboard/my-clothes"
-            className={navLinkClass}
-            onClick={onClick}
-          >
-            <FaList className="text-xl" />
-          My  Clothes
-          </NavLink>
-        </div>
-      )}
-
-      {user?.role === "finder" && (
-        <div className="space-y-3">
-          <NavLink to="/dashboard" className={navLinkClass} onClick={onClick}>
-            <FaShoppingBag className="text-xl" />
-            Clothes Selected
-          </NavLink>
-
-          <NavLink
-            to="/dashboard/purchasing"
-            className={navLinkClass}
-            onClick={onClick}
-          >
-            <FaBoxOpen className="text-xl" />
-            Purchasing Clothes
-          </NavLink>
-        </div>
-      )}
+      {/* Bottom Section (Logout) */}
+      <div className="mt-auto pt-6 border-t">
+        <button
+          onClick={logout}
+          className="
+            w-full flex items-center gap-3 px-4 py-3 rounded-lg
+            text-red-600 hover:bg-red-50
+            transition-all duration-200
+          "
+        >
+          <FaSignOutAlt />
+          Logout
+        </button>
+      </div>
     </nav>
   );
 };

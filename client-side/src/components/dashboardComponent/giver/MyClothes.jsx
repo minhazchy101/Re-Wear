@@ -15,7 +15,7 @@ const MyClothes = () => {
               <th className="py-3 px-6 text-left">Image</th>
               <th className="py-3 px-6 text-left">Title</th>
               <th className="py-3 px-6 text-left">Id</th>
-              <th className="py-3 px-6 text-left">Info</th>
+              <th className="py-3 px-6 text-left hidden md:block">Info</th>
               <th className="py-3 px-6 text-left">Price</th>
               <th className="py-3 px-6 text-left">Status</th>
               <th className="py-3 px-6 text-center">Actions</th>
@@ -40,7 +40,7 @@ const MyClothes = () => {
                 </td>
                 <td className="py-3 px-6 font-medium">{item.title}</td>
                 <td className="py-3 px-6">{item._id}</td>
-                <td className="py-3 px-6 text-center flex flex-col justify-center items-start gap-1">
+                <td className="py-3 px-6 text-center  flex-col justify-center items-start gap-1 hidden md:flex">
                   <span>Category: {item.category}</span>
                   <span>Size: {item.size}</span>
                   <span>Condition: {item.condition}</span>
@@ -67,7 +67,7 @@ const MyClothes = () => {
                 </td>
                 <td className="py-3 px-6 text-center flex flex-col justify-center gap-2">
                   <button
-                    onClick={() => navigate(`dashboard/edit-clothe/${item._id}`)}
+                    onClick={() => {navigate(`dashboard/edit-clothe/${item._id}`);scrollTo(0,0)}}
                     className="flex items-center gap-1 bg-primary hover:bg-primary-dull text-white px-3 py-1 rounded-lg transition-all duration-300"
                   >
                     <FiEdit /> Edit

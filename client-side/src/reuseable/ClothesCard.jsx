@@ -6,6 +6,7 @@ import {
   FiCheckCircle,
   FiTag,
 } from "react-icons/fi";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
@@ -41,12 +42,12 @@ const ClothesCard = ({ item }) => {
       {/* IMAGE */}
       <div
         onClick={() => navigate(`/clothe-details/${item._id}`)}
-        className="relative cursor-pointer group overflow-hidden"
+        className="relative cursor-pointer group overflow-hidden flex justify-center"
       >
         <img
           src={item.images[0]}
           alt={item.title}
-          className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-108"
+          className="w-60 h-60 object-center transition-transform duration-500 group-hover:scale-108"
         />
 
         {/* PRICE BADGE */}
@@ -92,11 +93,56 @@ const ClothesCard = ({ item }) => {
 
       {/* CONTENT */}
       <div className="p-5 space-y-3">
-        <h3 className="font-semibold text-lg text-gray-800 truncate">
+        <div className="flex justify-between">
+        <h3 className="font-semibold text-sm md:text-base lg:text-lg text-gray-800 truncate">
           {item.title}
         </h3>
+        {user && 
+        <div className="relative group">
+              <BsThreeDotsVertical  className="text-2xl cursor-pointer text-primary hover:text-white transition-all duration-300 ease-in-out transform hover:bg-primary-dull hover:scale-110 hover:shadow-lg rounded-full" />
+              <ul className="
+                absolute right-2 top-2 mt-3 w-20 bg-light-bg p-2 rounded-lg shadow-lg
+                opacity-0 scale-95 pointer-events-none
+                group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto
+                transition-all space-y-2
+              ">
+                {user?._id === item.giverId ?
+                
+               (<>
+               
+                <li>
+                 <button
+                onClick={() =>
+                  navigate(`dashboard/edit-clothe/${item._id}`)
+                }
+                className="btn-primary  p-1 w-full"
+              >
+                Edit
+              </button></li>
+              <li>
+              <button
+                onClick={() => handleDelete(item._id)}
+                className="btn-error  p-1 w-full"
+              >
+                Delete
+              </button>
+                </li> </>) : <>
+                <li>
+                 <button
+                 onClick={() => navigate(`/clothe-details/${item._id}`)}
+                className="btn-primary  p-1 w-full"
+              >
+               Details
+              </button></li>
+                </>
+                }
+                
+              </ul>
+            </div>}
+        
+        </div>
 
-        <div className="text-sm text-gray-500 space-y-1">
+        <div className="text-sm text-gray-500 space-y-1 h-34">
           <p className="flex items-center gap-2">
             <FiCheckCircle /> Status: {item.status}
           </p>
@@ -115,45 +161,26 @@ const ClothesCard = ({ item }) => {
         <div className="flex gap-2 pt-3">
           <button
             onClick={() => navigate(`/clothe-details/${item._id}`)}
-            className="flex-1 btn-primary py-2 px-1"
+            className="flex-1 btn-primary md:py-2 p-1"
           >
             Details
           </button>
-
-          {user?._id === item.giverId ? (
-            <>
-              <button
-                onClick={() =>
-                  navigate(`dashboard/edit-clothe/${item._id}`)
-                }
-                className="flex-1 btn-primary py-2 px-1"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(item._id)}
-                className="flex-1 bg-red-500 text-white rounded-xl py-2 text-sm hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </>
-          ) : (
-            <button
+                
+          <button
               onClick={() =>
                 isSelected
                   ? removeSelectItem(item._id)
                   : selectItem(item._id)
               }
-              className={`flex-1 btn-primary py-2 px-1
+              className={`flex-1 btn-primary md:py-2 p-1
                 ${
                   isSelected
-                    ? "bg-primary-dull text-white"
+                    ? "btn-error"
                     : "bg-primary text-white hover:bg-primary-dull"
                 }`}
             >
-              {isSelected ? "Remove Item" : "Select Item"}
+              {isSelected ? "Remove" : "Select"}
             </button>
-          )}
         </div>
       </div>
     </div>

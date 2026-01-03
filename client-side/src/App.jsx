@@ -44,11 +44,16 @@ const App = () => {
         <Route path='/signup' element={<Signup/>}/>
        
         <Route path='/profile' element={user ? <Profile/> : <Signin/>}/>
+
         <Route path='/dashboard' element={user ? <DashboardLayout/> : <Signin/>}>
+
            <Route index element={user?.role === "sharer" ? <AddClothes/> : <Selected/>}/>
             <Route path='workflow' element={<Workflow/>}/>
+
             <Route path='my-clothes' element={<MyClothes/>}/>
+
             <Route path="edit-clothe/:id" element={<EditClothes />} />
+            
             <Route path='purchasing' element={<PurchasedClothes/>}/>
 
         </Route>

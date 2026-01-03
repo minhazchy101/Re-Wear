@@ -2,6 +2,7 @@ import React from "react";
 import { FiMail, FiUser, FiBox, FiShoppingBag, FiSearch } from "react-icons/fi";
 import { useAppContext } from "../context/AppContext";
 import ClothesCard from "../reuseable/clothesCard";
+import { Link } from "react-router-dom";
 
 
 const Profile = () => {
@@ -71,9 +72,9 @@ console.log(clothesPost)
   </div>
 
   {/* RIGHT : Action */}
-  <button className="w-full lg:w-auto px-6 py-2 text-sm font-medium rounded-full bg-primary text-white hover:bg-primary-dull transition">
-    Review
-  </button>
+  <Link to="/dashboard" className="btn-primary px-6 py-2">
+    Dashboard
+  </Link>
 
 </div>
 

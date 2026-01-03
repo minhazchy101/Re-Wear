@@ -4,10 +4,9 @@ import { FiUpload } from "react-icons/fi";
 import { useAppContext } from "../../../context/AppContext";
 import toast from "react-hot-toast";
 
-
 const AddClothes = () => {
-  const { axios, navigate, fetchUser ,fetchAllClothes} = useAppContext();
- 
+  const { axios, navigate, fetchUser, fetchAllClothes } = useAppContext();
+
   const {
     register,
     handleSubmit,
@@ -58,17 +57,14 @@ const AddClothes = () => {
 
       const res = await axios.post("/add-clothes", formData);
       if (res.data.success) {
-        await fetchUser()
-        await fetchAllClothes()
-        toast.success(res.data.message)
-        reset()
-        navigate('/dashboard/my-clothes')
+        await fetchUser();
+        await fetchAllClothes();
+        toast.success(res.data.message);
+        reset();
+        navigate("/dashboard/my-clothes");
+      } else {
+        toast.error(res.data.message);
       }
-      else{
-        toast.error(res.data.message)
-
-      }
-      
     } catch (error) {
       toast.error(error.message);
     }
@@ -89,11 +85,11 @@ const AddClothes = () => {
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           {/* IMAGES */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 ">
             <label className="font-medium text-gray-700 mb-2 block">
               Images
             </label>
-            <div className="flex gap-4 flex-wrap">
+            <div className="flex gap-4 flex-wrap justify-around items-center">
               {files.map((file, index) => (
                 <label
                   key={index}
@@ -170,10 +166,7 @@ const AddClothes = () => {
               Category
             </label>
             <div className="flex flex-wrap gap-3">
-              {["kids",
-"women",
-"men",
-].map((cat) => (
+              {["kids", "women", "men"].map((cat) => (
                 <label key={cat} className="cursor-pointer">
                   <input
                     type="radio"
@@ -184,30 +177,27 @@ const AddClothes = () => {
                   <div className="px-4 py-2 rounded-full border border-gray-300 peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary hover:border-primary transition-all duration-300">
                     {cat}
                   </div>
-                  
                 </label>
               ))}
             </div>
             {errors.category && (
-              <p className="text-red-500 text-sm mt-1">
-                Category is required
-              </p>
+              <p className="text-red-500 text-sm mt-1">Category is required</p>
             )}
           </div>
 
-        
           {/* SIZE */}
           <div>
             <label className="font-medium text-gray-700 mb-1 block">Size</label>
-            <select {...register("size" , { required: true })} className={inputClass}>
+            <select
+              {...register("size", { required: true })}
+              className={inputClass}
+            >
               {["S", "M", "L", "XL", "XXL", "XXXL", "4XL"].map((size) => (
                 <option key={size}>{size}</option>
               ))}
             </select>
             {errors.size && (
-              <p className="text-red-500 text-sm mt-1">
-                Size is required
-              </p>
+              <p className="text-red-500 text-sm mt-1">Size is required</p>
             )}
           </div>
 
@@ -216,7 +206,10 @@ const AddClothes = () => {
             <label className="font-medium text-gray-700 mb-1 block">
               Condition
             </label>
-            <select {...register("condition" , { required: true })} className={inputClass}>
+            <select
+              {...register("condition", { required: true })}
+              className={inputClass}
+            >
               {[
                 "New with tags",
                 "New without tags",
@@ -228,13 +221,12 @@ const AddClothes = () => {
               ))}
             </select>
             {errors.condition && (
-              <p className="text-red-500 text-sm mt-1">
-                Condition is required
-              </p>
+              <p className="text-red-500 text-sm mt-1">Condition is required</p>
             )}
           </div>
 
           {/* PRICING */}
+
           <div className="md:col-span-2">
             <label className="font-medium text-gray-700 mb-2 block">
               Pricing
@@ -243,27 +235,27 @@ const AddClothes = () => {
             <div className="flex items-center gap-2 mb-3 text-gray-600">
               <input
                 type="checkbox"
-                {...register("isFree" , { required: true })}
+                {...register("isFree")}
                 className="accent-primary scale-110"
               />
               This item is free
-              {errors.isFree && (
-              <p className="text-red-500 text-sm mt-1">
-               Price condition is required
-              </p>
-            )}
             </div>
 
             {!isFree && (
               <div className="flex flex-wrap gap-2">
                 <input
                   type="number"
-                  {...register("price", { valueAsNumber: true }, { required: true })}
-                  className={inputClass + " flex-1"}
                   placeholder="Enter price"
+                  className={inputClass + " flex-1"}
+                  {...register("price", {
+                    valueAsNumber: true,
+                    validate: (value) =>
+                      value > 0 || "Price is required when item is not free",
+                  })}
                 />
+
                 <select
-                  {...register("currency" , { required: true })}
+                  {...register("currency", { required: !isFree })}
                   className={inputClass + " w-28"}
                 >
                   {["BDT", "PKR", "USD", "SAR", "OTHER"].map((cur) => (
@@ -272,14 +264,8 @@ const AddClothes = () => {
                     </option>
                   ))}
                 </select>
-                {errors.currency && (
-              <p className="text-red-500 text-sm mt-1">
-                Currency is required
-              </p>
-            )}
               </div>
             )}
-
             {!isFree && currency === "OTHER" && (
               <div>
                 <input
@@ -289,17 +275,15 @@ const AddClothes = () => {
                 />
 
                 {errors.customCurrency && (
-              <p className="text-red-500 text-sm mt-1">
-                Custom Currency is required
-              </p>
-            )}
-
+                  <p className="text-red-500 text-sm mt-1">
+                    Custom Currency is required
+                  </p>
+                )}
               </div>
-              
             )}
-            {errors.size && (
+            {!isFree && errors.price && (
               <p className="text-red-500 text-sm mt-1">
-                Size is required
+                {errors.price.message}
               </p>
             )}
           </div>
@@ -310,14 +294,12 @@ const AddClothes = () => {
               Location
             </label>
             <input
-              {...register("location" , { required: true })}
+              {...register("location", { required: true })}
               className={inputClass}
               placeholder="City, area..."
             />
             {errors.location && (
-              <p className="text-red-500 text-sm mt-1">
-                Location is required
-              </p>
+              <p className="text-red-500 text-sm mt-1">Location is required</p>
             )}
           </div>
 
@@ -342,7 +324,7 @@ const AddClothes = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`bg-primary text-white px-8 py-3 rounded-xl transition-all duration-300
+              className={`btn-primary px-8 py-2
       ${
         isSubmitting
           ? "opacity-80 cursor-not-allowed"

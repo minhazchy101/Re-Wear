@@ -187,7 +187,7 @@ const ClotheDetails = () => {
               <button
               
                onClick={() =>
-                  navigate(`dashboard/edit-clothe/${clothe?._id}`)
+                {  navigate(`dashboard/edit-clothe/${clothe?._id}`);scrollTo(0,0)}
                 }className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Edit</button>
               <button
                   onClick={() => handleDelete(clothe?._id)}

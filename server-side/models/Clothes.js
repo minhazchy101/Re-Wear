@@ -10,7 +10,7 @@ description  : { type : String, require : true},
 category  : { type : String, require : true, enum: ["kids",
 "women",
 "men",],},
-size  : { type : String, require : true, enum: [ "S", "M", "L", "XL", "XXL"],},
+size  : { type : String, require : true, enum: ["S", "M", "L", "XL", "XXL", "XXXL", "4XL"],},
 condition  : { type : String, require : true,  enum: [
     "New with tags",
     "New without tags",
