@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
-import ClothesCard from "../reuseable/clothesCard";
+import ClothesCard from "../reuseable/ClothesCard";
 
 const ClotheCategories = () => {
   const { categories } = useParams();

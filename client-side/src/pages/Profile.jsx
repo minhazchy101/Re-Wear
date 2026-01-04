@@ -1,7 +1,7 @@
 import React from "react";
 import { FiMail, FiUser, FiBox, FiShoppingBag, FiSearch } from "react-icons/fi";
 import { useAppContext } from "../context/AppContext";
-import ClothesCard from "../reuseable/clothesCard";
+import ClothesCard from "../reuseable/ClothesCard";
 import { Link } from "react-router-dom";
 
 
