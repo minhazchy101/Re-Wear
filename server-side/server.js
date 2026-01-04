@@ -12,11 +12,14 @@ dotenv.config();
 
 const app = express()
 const port = 3000
-
+const allowedOrigins = [
+  process.env.LOCAL_URL,
+  process.env.CLIENT_URL
+];
 await connectDB()
 await connectCloudinary()
 app.use(cors({
-  origin :  'http://localhost:5173', 
+  origin :  allowedOrigins, 
   credentials : true
 }))
 app.use(express.json()); 
