@@ -1,5 +1,5 @@
 import express from 'express'
-import cors from 'cors'
+import cors from 'cors';
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/userRoute.js'
@@ -12,15 +12,15 @@ dotenv.config();
 
 const app = express()
 const port = 3000
-// const allowedOrigins = [
-//   process.env.LOCAL_URL,
-//   process.env.CLIENT_URL
-// ];
+const allowedOrigins = [
+  process.env.LOCAL_URL,
+  process.env.CLIENT_URL
+];
 await connectDB()
 await connectCloudinary()
-console.log("process.env.CLIENT_URL:", process.env.CLIENT_URL);
+// console.log("allowedOrigins:", allowedOrigins);
 app.use(cors({
-  origin :  process.env.CLIENT_URL, 
+  origin :  allowedOrigins, 
   credentials : true
 }))
 app.use(express.json()); 
