@@ -18,6 +18,7 @@ const port = 3000
 // ];
 await connectDB()
 await connectCloudinary()
+console.log("process.env.CLIENT_URL:", process.env.CLIENT_URL);
 app.use(cors({
   origin :  process.env.CLIENT_URL, 
   credentials : true
