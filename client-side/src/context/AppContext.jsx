@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+
 axios.defaults.withCredentials = true ; 
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL ;
+axios.defaults.baseURL = axios.defaults.baseURL = import.meta.env.VITE_BASE_LOCAL_URL || import.meta.env.VITE_BASE_URL;
+
 
 export const AppContext = createContext()
 
@@ -17,7 +19,7 @@ export const AppContextProvider =({children})=>{
   const [loading, setLoading] = useState(true)
    const [selectItems, setSelectItems] = useState([]);
 
-   console.log("selectItems => ", selectItems)
+  //  console.log("selectItems => ", selectItems)
 
   const logout = async () => {
       try {
@@ -51,7 +53,9 @@ export const AppContextProvider =({children})=>{
       // toast.error(error.message)
      console.log(error.message)
       
-    }
+    }finally {
+    setLoading(false)
+  }
   }
   // console.log('clothesPost : ', clothesPost)
 
@@ -73,7 +77,9 @@ export const AppContextProvider =({children})=>{
       // toast.error(error.message)
      console.log(error.message)
       
-    }
+    }finally {
+    setLoading(false)
+  }
   }
 console.log('selectItems => ', selectItems)
 
