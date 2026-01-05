@@ -20,8 +20,8 @@ const AllProducts = () => {
 
       {/* Products Grid */}
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {clothes.map(item => (
-          <ClothesCard key={item._id} item={item} />
+        {clothes.map((item, i) => (
+          <ClothesCard key={i} item={item} />
         ))}
       </div>
 
