@@ -9,6 +9,7 @@ import {
   FiGrid,
 } from "react-icons/fi";
 import { useAppContext } from "../context/AppContext";
+import Logo from "../reuseable/Logo";
 
 
 const Navbar = () => {
@@ -53,9 +54,7 @@ const Navbar = () => {
     >
       <div className="h-16 px-6 md:px-16 lg:px-24 flex items-center justify-between">
         {/* Logo */}
-        <NavLink to="/" className="text-2xl font-bold text-primary hover:scale-110 transition-all duration-300 ease-in-out">
-          Re<span className="text-gray-900">Wear</span>
-        </NavLink>
+       <Logo/>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
@@ -63,6 +62,7 @@ const Navbar = () => {
             <NavLink
               key={link.name}
               to={link.path}
+              
               className={({ isActive }) =>
                 `relative font-medium transition hover:scale-105
                 ${isActive ? "text-primary" : "text-gray-700 hover:text-primary"}
@@ -83,6 +83,7 @@ const Navbar = () => {
           {!user ? (
             <NavLink
               to="/signin"
+              
               className="btn-primary py-1 px-6"
             >
               Sign In
@@ -108,12 +109,14 @@ const Navbar = () => {
                 <li>
                   <NavLink
                     to="/profile"
+                    
                     className="block px-4 py-2 hover:bg-gray-100"
                   >
                     My Profile
                   </NavLink>
                   <NavLink
                     to="/dashboard"
+                    
                     className="block px-4 py-2 hover:bg-gray-100"
                   >
                     My Dashboard
@@ -147,6 +150,7 @@ const Navbar = () => {
         className="flex flex-col items-center gap-5 py-6">
           {navLinks.map((link) => (
             <NavLink
+             
               key={link.name}
               to={link.path}
            
@@ -161,15 +165,15 @@ const Navbar = () => {
           {user ? (
             <> 
              <NavLink
-          
                     to="/profile"
+                    
                     className="block px-4 py-2 hover:bg-gray-100"
                   >
                     My Profile
                   </NavLink>
                   <NavLink
-               
                     to="/dashboard"
+                    
                     className="block px-4 py-2 hover:bg-gray-100"
                   >
                     My Dashboard
@@ -184,7 +188,7 @@ const Navbar = () => {
           ) : (
             <NavLink
               to="/signin"
-           
+             
               className="px-8 py-2 btn-primary"
             >
               Sign In

@@ -1,4 +1,5 @@
 import { FiInstagram, FiTwitter, FiGithub } from "react-icons/fi";
+import Logo from "../reuseable/Logo";
 
 export default function Footer() {
   return (
@@ -7,9 +8,7 @@ export default function Footer() {
         
         {/* Brand */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-primary">
-            Re<span className="text-gray-900">Wear</span>
-          </h2>
+         <Logo/>
           <p className="text-sm leading-relaxed text-gray-600">
             Give more. Waste less.  
             ReWear connects people to donate and receive unused clothes,

@@ -22,6 +22,7 @@ import ClotheCategories from './pages/ClotheCategories';
 import MyClothes from './components/dashboardComponent/giver/MyClothes';
 import EditClothes from './components/dashboardComponent/giver/EditClothes';
 import DashboardLayout from './pages/dashboard/DashboardLayout';
+import About from './pages/About';
 // import AddClothes from './components/dashboardComponent/giver/addClothes';
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
         
       <Routes>
         <Route path='/' element={<Home/>}/>
+        <Route path='/about' element={<About/>}/>
         <Route path='/allClothes' element={<AllProducts/>}/>
         <Route path='/clothe-categories/:categories' element={<ClotheCategories/>}/>
         <Route path='/clothe-details/:id' element={<ClotheDetails/>}/>

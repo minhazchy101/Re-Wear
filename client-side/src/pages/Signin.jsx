@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
+import Logo from "../reuseable/Logo";
 
 export default function Signin() {
   const {axios, navigate,setUser, setSelectItems, setClothesPost} = useAppContext()
@@ -46,9 +47,7 @@ export default function Signin() {
       >
        {/* Logo & Heading */}
 <div className="mb-8 text-center">
-  <h1 className="text-4xl font-extrabold tracking-tight text-primary">
-    Re<span className="text-gray-900">Wear</span>
-  </h1>
+  <Logo/>
 
   <p className="mt-2 text-base text-gray-600">
     Welcome back! Please sign in to continue

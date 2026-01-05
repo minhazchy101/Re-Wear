@@ -114,7 +114,7 @@ orderItems})
 export const logout = async (req, res)=>{
   try {
     res.clearCookie('token')
-    res.json({success : true, message : "User logout SuccessFully"})
+    res.json({success : true, message : "User Sign Out SuccessFully"})
   } catch (error) {
       res.send({success : false, message: `Log out failed for : ${error}`})
   }

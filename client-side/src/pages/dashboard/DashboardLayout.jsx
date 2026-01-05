@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import Logo from "../../reuseable/Logo";
 
 const DashboardLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -81,9 +82,7 @@ const DashboardLayout = () => {
         `}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h1 className="text-2xl font-bold text-primary">
-            Re<span className="text-gray-900">Wear</span>
-          </h1>
+          <Logo/>
           <button
             onClick={() => setMobileMenuOpen(false)}
             className="text-gray-600 hover:text-primary"
@@ -143,13 +142,7 @@ const SidebarContent = ({
       {/* Top Section */}
       <div>
         <div className="flex justify-center mb-8">
-          <NavLink
-            to="/"
-            className="text-3xl font-extrabold text-primary"
-            onClick={onNavigate}
-          >
-            Re<span className="text-gray-900">Wear</span>
-          </NavLink>
+         <Logo/>
         </div>
 
         {user?.role === "sharer" && (

@@ -1,8 +1,8 @@
-import { Children, createContext, useContext } from "react";
+import {  createContext, useContext } from "react";
 import axios from 'axios'
 import { useState } from "react";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 axios.defaults.withCredentials = true ; 
@@ -21,6 +21,13 @@ export const AppContextProvider =({children})=>{
    const [selectItems, setSelectItems] = useState([]);
 
   //  console.log("selectItems => ", selectItems)
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  
 
   const logout = async () => {
       try {

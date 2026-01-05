@@ -147,7 +147,6 @@ export const getAllClothes =async (req, res)=>{
     const data = await Clothe.find().sort({ createdAt: -1 });
     res.json({
       success: true,
-      message: "Clothes added successfully",
       data,
     });
 
