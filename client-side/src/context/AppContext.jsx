@@ -20,7 +20,7 @@ export const AppContextProvider =({children})=>{
   const [loading, setLoading] = useState(true)
    const [selectItems, setSelectItems] = useState([]);
 
-  //  console.log("selectItems => ", selectItems)
+   console.log("clothes => ", clothes)
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -72,9 +72,7 @@ export const AppContextProvider =({children})=>{
       const res = await axios.get('/getAllClothes')
       //  console.log(res.data)
       if(res.data.success) {
-        const clotheData = res.data.data.filter(clth => clth.status === "Available")
-
-        setClothes(clotheData)
+        setClothes(res.data.data)
         setLoading(false)
       }else{
          setClothes(null)

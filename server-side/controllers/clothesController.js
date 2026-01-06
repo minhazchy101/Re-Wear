@@ -144,7 +144,7 @@ export const like = async (req, res) => {
 
 export const getAllClothes =async (req, res)=>{
   try {
-    const data = await Clothe.find().sort({ createdAt: -1 });
+    const data = await Clothe.find({status: "Available"}).sort({ createdAt: -1 });
     res.json({
       success: true,
       data,

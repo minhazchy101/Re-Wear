@@ -15,13 +15,34 @@ const port = 3000
 
 await connectDB()
 await connectCloudinary()
-// console.log("allowedOrigins:", allowedOrigins);
+// console.log("CLIENT_URL:", process.env.CLIENT_URL);
+// app.use(cors({
+//   origin :  process.env.CLIENT_URL, 
+//   credentials : true
+// }))
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://rewear-hazel.vercel.app"
+];
+
 app.use(cors({
-  origin :  process.env.CLIENT_URL, 
-  credentials : true
-}))
+  origin: function (origin, callback) {
+    // Postman / server-to-server request
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json()); 
 app.use(cookieParser());
+
+
 
 app.get('/', (req, res)=> res.send("server is working...!!"))
 app.use(userRouter)
