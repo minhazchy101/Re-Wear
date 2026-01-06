@@ -21,9 +21,7 @@ await connectCloudinary()
 //   credentials : true
 // }))
 
-const allowedOrigins = process.env.CLIENT_URL
-  ? process.env.CLIENT_URL.split(",")
-  : [];
+const allowedOrigins = process.env.CLIENT_URL;
 
 app.use(
   cors({
