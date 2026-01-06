@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../reuseable/LoadingSpinner";
 
 axios.defaults.withCredentials = true ; 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL ;
@@ -161,7 +162,7 @@ export const AppContextProvider =({children})=>{
   selectItems, setSelectItems, logout
 }
  return   <AppContext.Provider value={value}>
-        {loading ? 'Loading...' : children}
+        {loading ? <LoadingSpinner/> : children}
     </AppContext.Provider>
 
 }

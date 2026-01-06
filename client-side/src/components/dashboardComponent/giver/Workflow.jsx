@@ -59,7 +59,7 @@ const deleteHistory = async (id) => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="pt-10 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-primary">My Workflow</h1>
 
       {orders?.length === 0 ? (
@@ -93,7 +93,7 @@ const deleteHistory = async (id) => {
                       alt={order?.clotheId?.title}
                       className="w-16 h-16 object-cover rounded-lg shadow-sm"
                     />
-                     <span className="text-xs font-medium text-gray-500 text-center">{order?.clotheId?.title}</span>
+                     <span className="text-xs font-medium text-gray-500 text-center hidden md:block">{order?.clotheId?.title}</span>
                     
                   </td>
 
