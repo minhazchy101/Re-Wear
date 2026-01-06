@@ -20,8 +20,6 @@ export default function Signin() {
   const onSubmit = async(data) => {
     try {
       const res = await axios.post('/signin', data)
-      console.log(res.data)
-
       if(res.data.success){
         reset()
         setUser(res.data.user)
