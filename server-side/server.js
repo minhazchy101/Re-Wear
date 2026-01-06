@@ -23,7 +23,7 @@ await connectCloudinary()
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://rewear-hazel.vercel.app"
+  process.env.CLIENT_URL
 ];
 
 app.use(cors({
