@@ -21,22 +21,24 @@ await connectCloudinary()
 //   credentials : true
 // }))
 
-const allowedOrigins = process.env.CLIENT_URL;
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://rewear-hazel.vercel.app"
+];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
+app.use(cors({
+  origin: function (origin, callback) {
+    // Postman / server-to-server request
+    if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
       callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-  })
-);
+    }
+  },
+  credentials: true,
+}));
 // app.options("*", cors());
 app.use(express.json()); 
 app.use(cookieParser());
