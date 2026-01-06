@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 
 const Profile = () => {
-  const { user, clothesPost } = useAppContext();
+  const { user, clothesPost,selectItems } = useAppContext();
 console.log(clothesPost)
   return (
     <div className="min-h-screen p-6 flex flex-col items-center px-6 md:px-18 lg:px-32">
@@ -54,7 +54,7 @@ console.log(clothesPost)
       </p>
       <p className="mt-1 text-sm font-medium text-gray-800">
         {user.role === "sharer"
-          ? user?.clothesPost.length
+          ? clothesPost.length
           : user?.orderItems.length }
       </p>
     </div>
@@ -65,7 +65,7 @@ console.log(clothesPost)
      Select Items
       </p>
       <p className="mt-1 text-sm font-medium text-gray-800">
-        {user?.selectItems.length }
+        {selectItems.length }
       </p>
     </div> 
     }

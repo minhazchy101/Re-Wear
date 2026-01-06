@@ -20,7 +20,7 @@ export const AppContextProvider =({children})=>{
   const [loading, setLoading] = useState(true)
    const [selectItems, setSelectItems] = useState([]);
 
-   console.log("clothes => ", clothes)
+  //  console.log("clothes => ", clothes)
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export const AppContextProvider =({children})=>{
     setLoading(false)
   }
   }
-console.log('selectItems => ', selectItems)
+// console.log('selectItems => ', selectItems)
 
   const selectItem = async(id)=>{
     if(!user) return toast.error("Please log in to continue.")

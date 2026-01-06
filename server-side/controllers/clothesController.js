@@ -120,7 +120,7 @@ export const like = async (req, res) => {
 
     const clotheId = req.params.id;
     const clothe = await Clothe.findById(clotheId);
-    console.log("Clothe before update:", clothe);
+    // console.log("Clothe before update:", clothe);
 
     if (!clothe) return res.status(404).json({ success: false, message: "Clothe not found" });
 

@@ -27,9 +27,20 @@ console.log('token -> ',req.cookies.token)
   })
 
   
-  const token = jwt.sign({id : user._id}, `${process.env.JWT_SECRET}`);
+  // create token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-  res.cookie('token', token)
+    // COOKIE OPTIONS 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
  
   res.send({success : true, message: "Account created successfully!", user})
@@ -40,48 +51,125 @@ console.log('token -> ',req.cookies.token)
   
 }
 
-export const signin = async (req, res)=>{
-  console.log('token -> ',req.cookies.token)
-  if(req.cookies.token)  return res.send({success : false, message: "You are already signed in."
-})
-  try {
-      const { email, password} = req.body;
+// export const signin = async (req, res)=>{
+//   console.log('token -> ',req.cookies.token)
+//   if(req.cookies.token)  return res.send({success : false, message: "You are already signed in."
+// })
+//   try {
+//       const { email, password} = req.body;
 
-  if(!email || !password) return res.send({success : false, message: "Credentials missing.!"})
+//   if(!email || !password) return res.send({success : false, message: "Credentials missing.!"})
 
-     const user = await  User.findOne({email})
-     if(!user) return res.send({success : false, message: "Something is wrong"})
+//      const user = await  User.findOne({email})
+//      if(!user) return res.send({success : false, message: "Something is wrong"})
       
-      const isMatch = bcrypt.compare(password, user.password)
-    if(!isMatch) return res.send({success : false, message: "Something is wrong"})
+//       const isMatch = bcrypt.compare(password, user.password)
+//     if(!isMatch) return res.send({success : false, message: "Something is wrong"})
 
        
-  const token = jwt.sign({id : user._id}, `${process.env.JWT_SECRET}`);
-  res.cookie('token', token)
-   const populatedUser = await user.populate([
-  {
-    path: "clothesPost",
-    options: { sort: { createdAt: -1 } }
-  },
-  {
-    path: "selectItems",
-    options: { sort: { createdAt: -1 } }
-  },
-  {
-    path: "orderItems",
-    options: { sort: { createdAt: -1 } }
-  },
-]);
+//   const token = jwt.sign({id : user._id}, `${process.env.JWT_SECRET}`);
+//   res.cookie('token', token)
+//    const populatedUser = await user.populate([
+//   {
+//     path: "clothesPost",
+//     options: { sort: { createdAt: -1 } }
+//   },
+//   {
+//     path: "selectItems",
+//     options: { sort: { createdAt: -1 } }
+//   },
+//   {
+//     path: "orderItems",
+//     options: { sort: { createdAt: -1 } }
+//   },
+// ]);
 
-    const clothesPost = populatedUser.clothesPost; 
-    const selectItems = populatedUser.selectItems; 
-    const orderItems = populatedUser.orderItems; 
-  res.send({success : true, message: 'Welcome back! You’re sign in.', user, selectItems, clothesPost, orderItems})
+//     const clothesPost = populatedUser.clothesPost; 
+//     const selectItems = populatedUser.selectItems; 
+//     const orderItems = populatedUser.orderItems; 
+//   res.send({success : true, message: 'Welcome back! You’re sign in.', user, selectItems, clothesPost, orderItems})
+
+//   } catch (error) {
+//      res.send({success : false, message: `Sign In failed for : ${error}`})
+//   }
+// }
+
+export const signin = async (req, res) => {
+  try {
+    //  already signed in check
+    const existingToken = req.cookies?.token;
+    if (existingToken) {
+      return res.send({
+        success: false,
+        message: "You are already signed in.",
+      });
+    }
+
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.send({
+        success: false,
+        message: "Credentials missing!",
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.send({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    // await added
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.send({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    // create token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // COOKIE OPTIONS 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    // populate
+    const populatedUser = await user.populate([
+      { path: "clothesPost", options: { sort: { createdAt: -1 } } },
+      { path: "selectItems", options: { sort: { createdAt: -1 } } },
+      { path: "orderItems", options: { sort: { createdAt: -1 } } },
+    ]);
+
+    res.send({
+      success: true,
+      message: "Welcome back! You’re signed in.",
+      user: populatedUser,
+      clothesPost: populatedUser.clothesPost,
+      selectItems: populatedUser.selectItems,
+      orderItems: populatedUser.orderItems,
+    });
 
   } catch (error) {
-     res.send({success : false, message: `Sign In failed for : ${error}`})
+    res.status(500).send({
+      success: false,
+      message: "Sign in failed",
+      error: error.message,
+    });
   }
-}
+};
 
 export const isUser = async(req, res)=>{
   
@@ -150,75 +238,3 @@ export const selectItems = async (req, res) => {
     res.send({ success: false, message: `Select items failed for: ${error.message}` });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// 
-
-
-// exports.createUser =  async(req, res)=>{
-//   const userData = await userSchema.create({
-//     name : "String MRC",
-//     email : "String@",
-//     image : "String.png",
-//     role : "StringRole",
-//   })
-//   res.json(userData)
-//   console.log(userData)
-// }
-
-// exports.readUsers = async(req, res)=>{
-//   const userUpdatedData = await userSchema.find()
-//   res.json(userUpdatedData)
-//   console.log(userUpdatedData)
-// }
-
-// exports.readUser = async(req, res)=>{
-//   const userUpdatedData = await userSchema.findOne({_id : "694156f22fefb0af5df994bd"})
-//   res.json(userUpdatedData)
-//   console.log(userUpdatedData)
-// }
-
-// exports.updateUser = async(req, res)=>{
-//   const userUpdatedData = await userSchema.findOneAndUpdate({_id : "694156f22fefb0af5df994bd"},
-//     {
-//     name : "String Updated",
-//     email : "String@",
-//     image : "String.png",
-//     role : "StringRole",
-//   })
-//   res.json(userUpdatedData)
-//   console.log(userUpdatedData)
-// }
-
-// exports.deleteUser = async(req, res)=>{
-//   const userUpdatedData = await userSchema.findOneAndDelete({_id : "694156f22fefb0af5df994bd"})
-//   res.json(userUpdatedData)
-//   console.log(userUpdatedData, 'Deleted')
-// }
