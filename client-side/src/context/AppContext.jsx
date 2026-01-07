@@ -162,7 +162,7 @@ export const AppContextProvider =({children})=>{
   selectItems, setSelectItems, logout
 }
  return   <AppContext.Provider value={value}>
-        {loading ? <LoadingSpinner/> : children}
+        {!loading ? <LoadingSpinner/> : children}
     </AppContext.Provider>
 
 }
