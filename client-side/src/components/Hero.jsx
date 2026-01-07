@@ -9,6 +9,7 @@ const Hero = () => {
       style={{
         backgroundImage: `url(${hero})`,
         backgroundPosition: "center",
+         backgroundRepeat: "no-repeat",
       }}
     >
       {/* Overlay */}
