@@ -15,7 +15,7 @@ const Categories = () => {
       <h2 className="text-2xl md:text-4xl font-extrabold mb-10 tracking-tight
       bg-linear-to-r from-primary to-primary-dull/40 bg-clip-text text-transparent
       ">
-                        <span className="text-black">Shop by</span>  Categories
+                        <span className="text-black">Shop by</span> Categories
                     </h2>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
