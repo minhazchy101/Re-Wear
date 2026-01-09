@@ -119,7 +119,7 @@ const DashboardLayout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="px-6 md:px-16 lg:px-24 flex-1 overflow-y-auto transition-all duration-300">
+        <main className="section flex-1 overflow-y-auto transition-all duration-300">
           <Outlet />
         </main>
       </div>

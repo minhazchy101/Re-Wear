@@ -1,97 +1,85 @@
-import React from "react";
-import { FaRecycle, FaHandsHelping, FaTshirt, FaUsers } from "react-icons/fa";
+import { FiHeart, FiUsers, FiRepeat } from "react-icons/fi";
+
 
 const About = () => {
   return (
-    <div className=" min-h-screen px-6 md:px-16 lg:px-24 py-10">
-      {/* Hero Section */}
-      <section className="bg-white my-10  text-center">
-        <h1 className="text-3xl md:text-4xl font-bold text-primary">
-          About
-        </h1>
-        <p className="mt-4 max-w-2xl mx-auto text-gray-600 text-lg">
-          ReWear is a modern platform to post, find, sell, or donate clothes.
+    <section className="section py-16">
+      <div className="text-center space-y-2 sm:space-y-4 md:scroll-p-6 pb-10">
+          <h1 className="text-xl sm:text-2xl md:text-4xl font-semibold md:font-bold">About <span className="text-primary">Re</span>Wear</h1>
+           <p className="mt-2 text-gray-600 max-w-xl mx-auto">
+            A platform to post, find, sell, or donate clothes.
+          </p>
+      </div>
+   
+    
+
+      {/* OUR STORY */}
+      <div className=" flex flex-col items-center text-center w-full mx-auto py-12 bg-light-bg rounded-lg">
+        <span className="bg-primary-dull/60 px-3 py-1 rounded-md text-white text-sm tracking-wide uppercase mb-4">
+          Our Story
+        </span>
+
+        <h3 className="text-2xl md:text-4xl font-bold mb-6">
+          Simple ideas create meaningful products
+        </h3>
+
+        <p className="text-gray-700 leading-relaxed text-lg max-w-6xl mx-auto">
+          The idea came to me while talking with my sisters. They shared real-world
+          problems about donating clothes or selling them at low prices. That
+          conversation sparked the thought to create ReWear, and I decided to
+          build it to solve these everyday challenges.
         </p>
-      </section>
+      </div>
 
-      {/* Mission Section */}
-      <section className="py-16  max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-              Our Mission
-            </h2>
-            <p className="text-gray-600 leading-relaxed">
-              Every year, millions of wearable clothes go unused while others
-              struggle to find affordable options. ReWear bridges this gap by
-              connecting people who want to share, sell, or donate clothes with
-              those who need them.
-            </p>
-          </div>
+      {/* OUR MISSION */}
+<div className=" py-16 grid md:grid-cols-3 gap-10 text-center">
+  
+  {/* PROBLEM */}
+  <div className="group p-8 rounded-2xl bg-gray-50 
+                  transition-all duration-300 ease-out
+                  hover:-translate-y-2 hover:shadow-xl hover:bg-primary/90">
+    <FiRepeat className="text-4xl text-primary mb-4 mx-auto transition-colors duration-300 group-hover:text-white" />
+    <h4 className="text-xl font-semibold mb-3 transition-colors duration-300 group-hover:text-white">
+      The Problem
+    </h4>
+    <p className="text-gray-600 transition-colors duration-300 group-hover:text-white/90">
+      Many people struggle to donate or resell clothes without losing value
+      or convenience.
+    </p>
+  </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-xl shadow-sm text-center">
-              <FaRecycle className="text-primary text-3xl mx-auto mb-3" />
-              <h4 className="font-semibold text-gray-800">Sustainability</h4>
-              <p className="text-sm text-gray-600 mt-1">
-                Reduce clothing waste
-              </p>
-            </div>
+  {/* SOLUTION */}
+  <div className="group p-8 rounded-2xl bg-gray-50 
+                  transition-all duration-300 ease-out
+                  hover:-translate-y-2 hover:shadow-xl hover:bg-primary/90">
+    <FiHeart className="text-4xl text-primary mb-4 mx-auto transition-colors duration-300 group-hover:text-white" />
+    <h4 className="text-xl font-semibold mb-3 transition-colors duration-300 group-hover:text-white">
+      The Solution
+    </h4>
+    <p className="text-gray-600 transition-colors duration-300 group-hover:text-white/90">
+      ReWear combines engaging fashion content with e-commerce to make
+      reselling and discovery simple and intuitive.
+    </p>
+  </div>
 
-            <div className="bg-white p-6 rounded-xl shadow-sm text-center">
-              <FaHandsHelping className="text-primary text-3xl mx-auto mb-3" />
-              <h4 className="font-semibold text-gray-800">Community</h4>
-              <p className="text-sm text-gray-600 mt-1">
-                Help & support others
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+  {/* IMPACT */}
+  <div className="group p-8 rounded-2xl bg-gray-50 
+                  transition-all duration-300 ease-out
+                  hover:-translate-y-2 hover:shadow-xl hover:bg-primary/90">
+    <FiUsers className="text-4xl text-primary mb-4 mx-auto transition-colors duration-300 group-hover:text-white" />
+    <h4 className="text-xl font-semibold mb-3 transition-colors duration-300 group-hover:text-white">
+      The Impact
+    </h4>
+    <p className="text-gray-600 transition-colors duration-300 group-hover:text-white/90">
+      Extending the lifecycle of clothing while encouraging more mindful
+      and sustainable fashion choices.
+    </p>
+  </div>
 
-      {/* How It Works */}
-      <section className="bg-white py-16 ">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl font-semibold text-gray-800 mb-10">
-            How ReWear Works
-          </h2>
+</div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-xl border bg-gray-50">
-              <FaTshirt className="text-primary text-4xl mx-auto mb-4" />
-              <h3 className="font-semibold text-lg text-gray-800">
-                Post Clothes
-              </h3>
-              <p className="text-gray-600 text-sm mt-2">
-                Upload clothes you no longer need and choose to donate or sell.
-              </p>
-            </div>
 
-            <div className="p-6 rounded-xl border bg-gray-50">
-              <FaUsers className="text-primary text-4xl mx-auto mb-4" />
-              <h3 className="font-semibold text-lg text-gray-800">
-                Discover Clothes
-              </h3>
-              <p className="text-gray-600 text-sm mt-2">
-                Browse clothes shared by others based on your needs.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-xl border bg-gray-50">
-              <FaHandsHelping className="text-primary text-4xl mx-auto mb-4" />
-              <h3 className="font-semibold text-lg text-gray-800">
-                Connect Directly
-              </h3>
-              <p className="text-gray-600 text-sm mt-2">
-                Contact the owner and complete the exchange easily.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      
-    </div>
+    </section>
   );
 };
 

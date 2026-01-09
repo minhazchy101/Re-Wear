@@ -7,10 +7,13 @@ const RecentlyAdded = () => {
   const { clothes } = useAppContext();
 
   return (
-    <section className="px-6 md:px-16 lg:px-24 py-16 bg-gray-50">
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-10 text-gray-800">
-        Recently Added
-      </h1>
+    <section className="section py-16">
+      
+      <h2 className="text-2xl md:text-4xl font-extrabold mb-10 tracking-tight
+      bg-linear-to-r from-primary to-primary-dull bg-clip-text text-transparent
+      ">
+                        <span className="text-black">New</span> ARRIVALS
+                    </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
         {clothes?.slice(0, 8).map((item) => (

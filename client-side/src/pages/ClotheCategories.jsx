@@ -16,7 +16,7 @@ const ClotheCategories = () => {
   const formattedCategory = categories.charAt(0).toUpperCase() + categories.slice(1);
 
   return (
-    <section className="px-6 md:px-16 lg:px-24 py-16 bg-gray-50 min-h-screen">
+    <section className="section py-16 bg-gray-50 min-h-screen">
       <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-6">
         {formattedCategory} Collection
       </h1>

@@ -10,10 +10,13 @@ const Categories = () => {
     ];
 
   return (
-    <section className="px-6 md:px-16 lg:px-24 py-16">
-      <h2 className="text-3xl font-bold text-center mb-10">
-        Shop by Age & Gender
-      </h2>
+    <section className="section py-16  bg-light-bg">
+
+      <h2 className="text-2xl md:text-4xl font-extrabold mb-10 tracking-tight
+      bg-linear-to-r from-primary to-primary-dull/40 bg-clip-text text-transparent
+      ">
+                        <span className="text-black">Shop by</span>  Categories
+                    </h2>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
         {categories.map((cat, index) => {

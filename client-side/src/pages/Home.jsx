@@ -4,19 +4,21 @@ import CallToAction from '../components/CallToAction'
 import Categories from '../components/Categories'
 import Hero from '../components/Hero'
 import RecentlyAdded from '../components/RecentlyAdded'
-import HowWorks from '../components/HowWorks'
+import HIW from '../components/HIW'
+import Mission from '../components/Mission'
+
 
 const Home = () => {
   return (
-    <>
+    <div >
       <Hero/>
       <Categories/>
       <RecentlyAdded/>
-      <HowWorks/>
-      {/* <h1 className="title text-center">reWare</h1>
-      <h1 className="sub-title text-center">reWare</h1>
-      <h1 className="text text-center">reWare</h1> */}
-    </>
+      <HIW/>
+      <Mission/>
+      <CallToAction/>
+     
+    </div>
   )
 }
 

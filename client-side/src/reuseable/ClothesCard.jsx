@@ -158,10 +158,10 @@ const ClothesCard = ({ item }) => {
         </div>
 
         {/* ACTIONS */}
-        <div className="flex gap-2 pt-3">
+        <div className="flex gap-4 pt-3">
           <button
             onClick={() => navigate(`/clothe-details/${item._id}`)}
-            className="flex-1 btn-primary md:py-2 p-1"
+            className="flex-1 btn-primary py-2"
           >
             Details
           </button>
@@ -172,7 +172,7 @@ const ClothesCard = ({ item }) => {
                   ? removeSelectItem(item._id)
                   : selectItem(item._id)
               }
-              className={`flex-1 btn-primary md:py-2 p-1
+              className={`flex-1 btn-primary py-2
                 ${
                   isSelected
                     ? "btn-error"
