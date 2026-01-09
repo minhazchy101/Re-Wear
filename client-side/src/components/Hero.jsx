@@ -1,6 +1,6 @@
 import { FiHeart, FiUsers, FiRepeat } from "react-icons/fi";
-import hero from "../../assets/heroBg.png";
-import hero_sm from "../../assets/heroBg_sm.png";
+import hero from "../../assets/heroBG_md.png";
+import hero_sm from "../../assets/hero_sm.png";
 import { Link } from "react-router-dom";
 
 const Hero = () => {
@@ -22,7 +22,7 @@ const Hero = () => {
         />
 
         {/* Overlay Content */}
-        <div className="absolute inset-0 flex flex-col justify-start  section py-40 ">
+        <div className="absolute inset-0 flex flex-col justify-center section max-w-1/2">
           <h1 className="text-3xl md:text-6xl font-bold text-primary mb-4">
             Re<span className="text-gray-900">Wear</span>
           </h1>
