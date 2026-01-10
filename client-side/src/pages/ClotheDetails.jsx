@@ -15,20 +15,21 @@ import toast from 'react-hot-toast'
 
 const ClotheDetails = () => {
   const { id } = useParams()
-  const { clothes, user, axios , selectItem, removeSelectItem, handleDelete, navigate, selectItems} = useAppContext()
+  const { clothes, user, axios, selectItem, removeSelectItem, handleDelete, navigate, selectItems } = useAppContext()
 
-  const clothe = clothes.find(item =>  item._id === id)
+  const clothe = clothes.find(item => item._id === id)
   const [thumbnail, setThumbnail] = React.useState(clothe?.images?.[0])
 
-  const [likes, setLikes] = useState( clothe?.likes || []);
+  const [likes, setLikes] = useState(clothe?.likes || []);
 
   const [animating, setAnimating] = useState(false);
 
- 
-    const isLiked = user ? likes?.includes(user._id) : false;
-   const isSelected = selectItems?.some(
-  it => it.toString() === clothe._id.toString()
-);
+
+  const isLiked = user ? likes?.includes(user._id) : false;
+  const isSelected = selectItems?.some(
+    (it) => it._id.toString() === clothe?._id.toString()
+  );
+
 
 
   const handleLike = async () => {
@@ -38,11 +39,11 @@ const ClotheDetails = () => {
     }
 
     try {
-      const res = await axios.get(`/like/${ clothe?._id}`);
+      const res = await axios.get(`/like/${clothe?._id}`);
       if (res.data.success) {
-      
+
         setLikes(res.data.likes || []);
-  
+
         setAnimating(true);
         setTimeout(() => setAnimating(false), 300);
 
@@ -165,48 +166,51 @@ const ClotheDetails = () => {
 
           {/* ACTIONS */}
           <div className="flex gap-4 mt-10">
-            
-                        <div className="flex-1 py-3 rounded-xl text-gray-700 font-medium flex items-center justify-center gap-2 transition">
-                           {/* Like button */}
-                    <button
-                      onClick={handleLike}
-                      className={` cursor-pointer p-2 rounded-full shadow-lg transition-all duration-300 ${
-                        isLiked ? "bg-primary text-white" : "bg-white text-primary hover:bg-primary hover:text-white"
-                      } ${animating ? "scale-125" : "scale-100"}`}
-                    >
-                      <FiHeart size={20} />
-                    </button>
-            
-                    {/* Likes count */}
-                    <div className=" flex items-center gap-1 px-3 py-1 bg-white rounded-full shadow text-sm font-medium text-gray-800">
-                      {likes.length} {likes.length === 1 ? "Like" : "Likes"}
-                    </div>
-                        </div>
-            {user?._id === clothe?.giverId ?(
-            <div className="flex-1 flex gap-2">
+
+            <div className="flex-1 py-3 rounded-xl text-gray-700 font-medium flex items-center justify-center gap-2 transition">
+              {/* Like button */}
               <button
-              
-               onClick={() =>
-                {  navigate(`dashboard/edit-clothe/${clothe?._id}`);scrollTo(0,0)}
-                }className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Edit</button>
-              <button
-                  onClick={() => handleDelete(clothe?._id)}
-              className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Delete</button>
+                onClick={handleLike}
+                className={` cursor-pointer p-2 rounded-full shadow-lg transition-all duration-300 ${isLiked ? "bg-primary text-white" : "bg-white text-primary hover:bg-primary hover:text-white"
+                  } ${animating ? "scale-125" : "scale-100"}`}
+              >
+                <FiHeart size={20} />
+              </button>
+
+              {/* Likes count */}
+              <div className=" flex items-center gap-1 px-3 py-1 bg-white rounded-full shadow text-sm font-medium text-gray-800">
+                {likes.length} {likes.length === 1 ? "Like" : "Likes"}
+              </div>
             </div>
-          ): (   <button
-              onClick={() =>
-                isSelected
-                  ? removeSelectItem(clothe?._id)
-                  : selectItem(clothe?._id)
-              }
+            {user?._id === clothe?.giverId ? (
+              <div className="flex-1 flex gap-2">
+                <button
+
+                  onClick={() => { navigate(`dashboard/edit-clothe/${clothe?._id}`); scrollTo(0, 0) }
+                  } className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Edit</button>
+                <button
+                  onClick={() => handleDelete(clothe?._id)}
+                  className="px-4 py-2 rounded-lg bg-primary text-sm font-medium hover:bg-primary-dull transition">Delete</button>
+              </div>
+            ) : (<button
+
+              onClick={() => {
+                if (isSelected) {
+                  removeSelectItem(clothe?._id);
+                } else {
+                  selectItem(clothe?._id);
+                }
+
+                navigate('/dashboard');
+              }}
+
               className={`flex-1 btn-primary py-2
-                ${
-                  isSelected
-                    ? "bg-primary-dull text-white"
-                    : "bg-primary text-white hover:bg-primary-dull"
+                ${isSelected
+                  ? "btn-error"
+                  : "bg-primary text-white hover:bg-primary-dull"
                 }`}
             >
-              {isSelected ? "Remove Item" : "Select Item"}
+              {isSelected ? "Remove" : "Select"}
             </button>)}
           </div>
 

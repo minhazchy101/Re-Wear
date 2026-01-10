@@ -13,7 +13,7 @@ const AllProducts = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('all');
   const [loading, setLoading] = useState(true);
-
+  const availableClothes = clothes.filter(clothe => clothe.status === "Available")
  
   const handleSearch = () => {
     setSearchTerm(searchQuery);
@@ -22,7 +22,7 @@ const AllProducts = () => {
   useEffect(() => {
     setLoading(true);
 
-    let filtered = [...clothes];
+    let filtered = [...availableClothes];
     if (searchTerm.trim()) {
       filtered = filtered.filter(
         (item) =>
@@ -53,7 +53,7 @@ const AllProducts = () => {
 
     setAllClothes(filtered);
     setLoading(false);
-  }, [clothes, searchTerm, sortOption]);
+  }, [availableClothes, searchTerm, sortOption]);
 
   return (
     <section className="section py-16">

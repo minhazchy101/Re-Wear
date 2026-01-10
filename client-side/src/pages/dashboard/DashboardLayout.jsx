@@ -119,7 +119,7 @@ const DashboardLayout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="section flex-1 overflow-y-auto transition-all duration-300">
+        <main className="flex-1 overflow-y-auto transition-all duration-300">
           <Outlet />
         </main>
       </div>
@@ -186,7 +186,7 @@ const SidebarContent = ({
               onClick={onNavigate}
             >
               <FaShoppingBag className="text-lg opacity-80" />
-              Clothes Selected
+               Selected Clothes
             </NavLink>
 
             <NavLink
@@ -207,8 +207,7 @@ const SidebarContent = ({
           onClick={logout}
           className="
             w-full flex items-center gap-3 px-4 py-3 rounded-lg
-            text-red-600 hover:bg-red-50
-            transition-all duration-200
+            btn-error
           "
         >
           <FaSignOutAlt />

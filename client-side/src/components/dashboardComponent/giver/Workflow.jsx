@@ -1,174 +1,265 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../../context/AppContext";
 import { FiPhone, FiMail, FiMapPin } from "react-icons/fi";
-import { FaCheck, FaTimes } from "react-icons/fa";
+
+import Swal from "sweetalert2";
+import LoadingSpinner from "../../../reuseable/LoadingSpinner";
+import PageHeader from "../reuse/PageHeader";
 
 const Workflow = () => {
   const [orders, setOrders] = useState([]);
-  const { axios } = useAppContext();
+  const [loading, setLoading] = useState(true);
+  const { axios, navigate } = useAppContext();
 
   useEffect(() => {
     axios.get("/my-orders-request").then((res) => {
-      setOrders(res.data.orders);
+      setOrders(res.data.orders || []);
+      setLoading(false);
     });
   }, [axios]);
 
-const declineOrder = async (id) => {
-  if (!window.confirm("Decline this request? This action cannot be undone.")) return;
-
-  try {
-    await axios.get(`/decline-order/${id}`);
-    setOrders((prev) => prev.filter((o) => o._id !== id));
-  } catch (error) {
-    console.log(error.message);
-  }
-};
-const deleteHistory = async (id) => {
-  if (!confirm("Remove this from your history?")) return;
-  await axios.delete(`/delete-order-history/${id}`);
-  setOrders((prev) => prev.filter(o => o._id !== id));
-};
-
-
+ 
   const confirmOrder = async (id) => {
     try {
-      const res = await axios.put(`/confirm-order/${id}`, { status: "Confirmed" });
-      console.log(res.data);
+      await axios.put(`/confirm-order/${id}`, { status: "Confirmed" });
       setOrders((prev) =>
-        prev.map((o) => (o._id === id ? { ...o, status: "Confirmed" } : o))
+        prev.map((o) =>
+          o._id === id ? { ...o, status: "Confirmed" } : o
+        )
       );
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  // Helper function for status badge
-  const renderStatus = (status) => {
-    const statusClasses = {
-      Pending: "bg-yellow-100 text-yellow-800",
-      Confirmed: "bg-green-100 text-green-800",
-      Declined: "bg-red-100 text-red-800",
-    };
-    return (
-      <span
-        className={`px-3 py-1 rounded-full text-sm font-semibold ${statusClasses[status]}`}
-      >
-        {status}
-      </span>
-    );
+  const declineOrder = async (id) => {
+    const result = await Swal.fire({
+      title: "Decline request?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Decline",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.get(`/decline-order/${id}`);
+      setOrders((prev) => prev.filter((o) => o._id !== id));
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
+  const deleteHistory = async (id) => {
+    const result = await Swal.fire({
+      title: "Delete history?",
+      text: "This will permanently remove this record.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Delete",
+    });
+
+    if (!result.isConfirmed) return;
+
+    await axios.delete(`/delete-order-history/${id}`);
+    setOrders((prev) => prev.filter((o) => o._id !== id));
+  };
+
+  const statusStyles = {
+    Pending: "bg-yellow-100 text-yellow-800",
+    Confirmed: "bg-green-100 text-green-800",
+    Declined: "bg-red-100 text-red-800",
+  };
+
+  if (loading) {
+    return <LoadingSpinner className="min-h-screen" size="w-12 h-12" />;
+  }
+
   return (
-    <div className="pt-10 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-primary">My Workflow</h1>
+    <div className="min-h-screen bg-light-bg py-6">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
+        {/* Page Header */}
+        <PageHeader
+          title="My Workflow"
+          subtitle="Manage incoming requests for your clothes"
+          items={orders}
+          tag="Requests"
+        />
 
-      {orders?.length === 0 ? (
-        <p className="text-gray-500 text-center">No requests yet.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
-            <thead className="bg-primary text-white">
-              <tr>
-                <th className="py-3 px-4 text-left">Product</th>
-                <th className="py-3 px-4 text-left hidden sm:table-cell">Order ID</th>
-                <th className="py-3 px-4 text-left hidden md:table-cell">Product Info</th>
-                <th className="py-3 px-4 text-left hidden md:table-cell">Finder Info</th>
-                <th className="py-3 px-4 text-left hidden lg:table-cell">Request Date</th>
-                <th className="py-3 px-4 text-left">Contact</th>
-                <th className="py-3 px-4 text-left">Status</th>
-                <th className="py-3 px-4 text-left">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody className="text-gray-700">
-              {orders?.map((order) => (
-                <tr
-                  key={order?._id}
-                  className="border-b hover:bg-gray-50 transition-colors duration-200"
-                >
-                  {/* Product */}
-                  <td className="py-3 px-4 flex flex-col items-center space-y-3">
-                    <img
-                      src={order?.clotheId?.images[0]}
-                      alt={order?.clotheId?.title}
-                      className="w-16 h-16 object-cover rounded-lg shadow-sm"
-                    />
-                     <span className="text-xs font-medium text-gray-500 text-center hidden md:block">{order?.clotheId?.title}</span>
-                    
-                  </td>
-
-                  {/* Order ID */}
-                  <td className="py-3 px-4 hidden sm:table-cell text-gray-600">{order?._id}</td>
-
-                  {/* Product Info */}
-                  <td className="py-3 px-4 hidden md:table-cell space-y-1">
-                    <p className="text-gray-600">Size: {order?.clotheId?.size}</p>
-                    <p className="text-gray-600">
-                      Price: {order?.clotheId?.isFree ? "FREE" : `${order?.clotheId?.price} ${order?.clotheId?.currency}`}
-                    </p>
-                  </td>
-
-                  {/* Finder Info */}
-                  <td className="py-3 px-4 hidden md:table-cell space-y-1">
-                    <p className="font-medium">{order?.takerId?.name}</p>
-                    <p className="flex items-center text-gray-600 text-sm">
-                      <FiMail className="w-4 h-4 mr-1" /> {order?.takerId?.email}
-                    </p>
-                  </td>
-
-                  {/* Request Date */}
-                  <td className="py-3 px-4 hidden lg:table-cell text-gray-600">
-                    {new Date(order?.createdAt).toLocaleDateString()}
-                  </td>
-
-                  {/* Contact */}
-                  <td className="py-3 px-4 space-y-1 text-gray-600 text-sm">
-                    <p className="flex items-center">
-                      <FiPhone className="w-4 h-4 mr-1" /> {order?.takerId?.contact}
-                    </p>
-                    <p className="flex items-center">
-                      <FiMapPin className="w-4 h-4 mr-1" /> {order?.clotheId?.location}
-                    </p>
-                  </td>
-
-                  {/* Status */}
-                  <td className="py-3 px-4">{renderStatus(order?.status)}</td>
-
-                {/* Actions */}
-<td className="py-3 px-4 flex space-x-2">
-  {order?.status === "Pending" ? (
-    <>
-      <button
-        onClick={() => confirmOrder(order?._id)}
-        className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition disabled:opacity-50"
-      >
-        <FaCheck /> Confirm
-      </button>
-      <button
-        onClick={() => declineOrder(order?._id)}
-        className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition"
-      >
-        <FaTimes /> Decline
-      </button>
-    </>
-  ) : (
-    <>
-      <button
-        onClick={() => deleteHistory(order?._id)}
-        className="flex items-center gap-1 text-xs  bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition"
-      >
-        Delete History
-      </button>
-    </>
-  )}
-</td>
-
+        {/* Table Container */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              {/* Table Head */}
+              <thead className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide border-b">
+                <tr>
+                  <th className="px-6 py-4 text-left">Item</th>
+                  <th className="px-6 py-4 text-left hidden sm:table-cell">
+                    Order ID
+                  </th>
+                  <th className="px-6 py-4 text-left hidden md:table-cell">
+                    Finder
+                  </th>
+                  <th className="px-6 py-4 text-left hidden lg:table-cell">
+                    Requested
+                  </th>
+                  <th className="px-6 py-4 text-left">Status</th>
+                  <th className="px-6 py-4 text-left">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              {/* Table Body */}
+              <tbody className="divide-y divide-gray-100">
+                {orders.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      className="py-24 text-center text-gray-500"
+                    >
+                      No requests yet.
+                    </td>
+                  </tr>
+                )}
+
+                {orders.map((order) => {
+                  const clothe = order?.clotheId;
+                  const taker = order?.takerId;
+
+                  return (
+                    <React.Fragment key={order?._id}>
+                      <tr className="hover:bg-gray-50 transition-colors">
+                        {/* Item */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-4">
+                            <img
+                              src={clothe?.images?.[0]}
+                              alt={clothe?.title}
+                              className="w-16 h-16 rounded-lg object-cover border"
+                              onClick={() =>
+                              navigate(`/clothe-details/${order?._id}`)
+                          }
+                            />
+                            <div className="min-w-0">
+                              <p className="font-medium text-gray-900 truncate">
+                                {clothe?.title}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                Size {clothe?.size} ·{" "}
+                                {clothe?.isFree
+                                  ? "Free"
+                                  : `${clothe?.price} ${clothe?.currency}`}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Order ID */}
+                        <td className="px-6 py-4 hidden sm:table-cell font-mono text-sm text-gray-500">
+                          {order?._id}
+                        </td>
+
+                        {/* Finder */}
+                        <td className="px-6 py-4 hidden md:table-cell text-sm">
+                          <p className="font-medium text-gray-800">
+                            {taker?.name}
+                          </p>
+                          <p className="flex items-center text-gray-500">
+                            <FiMail className="mr-1" />
+                            {taker?.email}
+                          </p>
+                          <p className="flex items-center text-gray-500">
+                            <FiPhone className="mr-1" />
+                            {taker?.contact}
+                          </p>
+                          <p className="flex items-center text-gray-500">
+                            <FiMapPin className="mr-1" />
+                            {clothe?.location}
+                          </p>
+                        </td>
+
+                        {/* Date */}
+                        <td className="px-6 py-4 hidden lg:table-cell text-sm text-gray-500">
+                          {new Date(order?.createdAt).toLocaleDateString()}
+                        </td>
+
+
+                        {/* Status */}
+                        <td className="px-6 py-4">
+                          <span
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusStyles[order?.status]
+                              }`}
+                          >
+                            {order?.status}
+                          </span>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-3">
+                          {order?.status === "Pending" ? (
+                            <>
+                              <button
+                                onClick={() =>
+                                  confirmOrder(order?._id)
+                                }
+                               className="btn-primary px-4 py-1.5  text-sm w-20"
+                              >
+                               Confirm
+                              </button>
+                              <button
+                                onClick={() =>
+                                  declineOrder(order?._id)
+                                }
+                                className="btn-error px-4 py-1.5 text-sm w-20"
+                              >
+                             Decline
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              onClick={() =>
+                                deleteHistory(order?._id)
+                              }
+                              className="btn-error px-4 py-1.5 text-xs w-20"
+                            >
+                              Delete History
+                            </button>
+                          )}
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* Mobile Extra Info */}
+                      <tr className="md:hidden bg-gray-50">
+                        <td
+                          colSpan="8"
+                          className="px-6 pb-4 text-sm text-gray-600 space-y-1"
+                        >
+                          <p>
+                            <span className="font-medium">Finder:</span>{" "}
+                            {taker?.name}
+                          </p>
+                          <p>
+                            <span className="font-medium">Email:</span>{" "}
+                            {taker?.email}
+                          </p>
+                          <p>
+                            <span className="font-medium">Order ID:</span>{" "}
+                            {order?._id}
+                          </p>
+                        </td>
+                      </tr>
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

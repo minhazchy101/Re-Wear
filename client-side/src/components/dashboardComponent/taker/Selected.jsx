@@ -1,128 +1,202 @@
 import React from "react";
 import { useAppContext } from "../../../context/AppContext";
 import toast from "react-hot-toast";
+import LoadingSpinner from "../../../reuseable/LoadingSpinner";
+import Swal from "sweetalert2";
+import PageHeader from "../reuse/PageHeader";
 
 const Selected = () => {
-  const { axios, navigate, removeSelectItem , selectItems, clothes, loading} = useAppContext();
- const items = selectItems;
+  const {
+    axios,
+    navigate,
+    removeSelectItem,
+    selectItems,
+    loading,
+  } = useAppContext();
 
-console.log("selectItems => ", selectItems)
-console.log("clothes => ", clothes)
+  const items = selectItems;
 
-  const orderAdd = async(id,giverId)=>{
+  const orderAdd = async (id, giverId) => {
     try {
-      const res = await axios.post('/add-order', {id, giverId})
-      if(res.data.success){
-        navigate('/dashboard/purchasing')
-        toast.success(res.data.message)
-      }else{
-        toast.error(res.data.message)
+      const toastId = toast.loading("Placing order...");
+      const res = await axios.post("/add-order", { id, giverId });
+
+      toast.dismiss(toastId);
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+        navigate("/dashboard/purchasing");
+      } else {
+        toast.error(res.data.message);
       }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
+  };
+
+  const handleRemove = (id) => {
+    Swal.fire({
+      title: "Remove this item?",
+      text: "This item will be removed from your selected list.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#999",
+      confirmButtonText: "Yes, remove",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeSelectItem(id);
+      }
+    });
+  };
+
+  if (loading) {
+    return <LoadingSpinner className="min-h-screen" size="w-12 h-12" />;
   }
 
-if (loading) {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-gray-500">Loading selected items...</p>
-    </div>
-  );
-}
-  return (
-    <div className="min-h-screen  p-4 md:p-8">
-      <h1 className="text-3xl font-bold text-primary mb-6">
-        Selected Items: {items.length} 
-      </h1>
+    <div className="min-h-screen py-6 bg-light-bg">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
 
-      {!loading && items.length === 0  ? (
-        <p className="text-gray-500 text-center py-20">
-          No selected items found.
-        </p>
-      ) : (
-        <div className="overflow-x-auto bg-white rounded-xl shadow">
+
+     
+      {/* Page Header */}
+      <PageHeader title={"Selected Items"} subtitle={"Review and manage your selected clothes before ordering"} items={items} tag={"selected"}/>
+
+
+        {items.length === 0 ? (
+                <div>
+                  <h1
+                    className="py-24 text-center text-gray-500"
+                  >
+                    No selected items found.
+                  </h1>
+                </div>
+              ) : 
+         ( <div className="bg-white rounded-2xl shadow-sm border border-gray-100 
+                overflow-hidden max-w-5xl mx-auto">
+        <div className="overflow-x-auto">
           <table className="min-w-full border-collapse">
             {/* Table Head */}
-            <thead className="bg-primary-dull text-primary">
-              <tr className="text-left text-sm">
-                <th className="p-3">Item</th>
-                <th className="p-3">Giver</th>
-                <th className="p-3">Details</th>
-                <th className="p-3">Price</th>
-                <th className="p-3">Status</th>
-                <th className="p-3 text-center">Action</th>
+            <thead className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
+              <tr>
+                <th className="px-6 py-4 text-left">Item</th>
+                <th className="px-6 py-4 text-left hidden md:table-cell">
+                  Giver
+                </th>
+                <th className="px-2 sm:px-4 md:px-6 py-4 text-left">Price</th>
+                <th className="px-6 py-4 text-left hidden sm:table-cell">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left">Actions</th>
               </tr>
             </thead>
 
             {/* Table Body */}
-            <tbody className="divide-y">
-              {items?.map((item) => (
-                <tr
-                  key={item._id}
-                  className="hover:bg-gray-50 transition"
-                >
-                  {/* Item */}
-                  <td className="p-3 flex items-center gap-3">
-                    <img
-                      src={item.images?.[0]}
-                      alt={item.title}
-                      className="w-14 h-14 rounded-md object-cover border"
-                    />
-                    <span className="font-medium text-gray-800">
-                      {item.title}
-                    </span>
-                  </td>
+            <tbody className="divide-y divide-gray-100">
 
-                  {/* Giver */}
-                  <td className="p-3 text-sm">
-                    <p className="font-medium">{item.giverName}</p>
-                    <p className="text-gray-500">{item.giverEmail}</p>
-                  </td>
+              {items.map((item) => (
+                <React.Fragment key={item._id}>
+                  <tr className="hover:bg-gray-50 transition-colors">
+                    {/* Item */}
+                    <td className="px-6 py-4">
+                      <div className="flex gap-4 items-center">
+                        <img
+                          src={item.images?.[0]}
+                          alt={item.title}
+                          className="w-16 h-16 rounded-lg object-cover border cursor-pointer"
+                          onClick={() =>
+                            navigate(`/clothe-details/${item._id}`)
+                          }
+                        />
 
-                  {/* Details */}
-                  <td className="p-3 text-sm text-gray-600">
-                    <p>Size: {item.size}</p>
-                    <p>Condition: {item.condition}</p>
-                    <p className="truncate max-w-[180px]">
-                      {item.location}
-                    </p>
-                  </td>
+                        <div className="min-w-0">
+                          <p className="font-medium text-gray-900 truncate">
+                            {item.title}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Size {item.size}
+                          </p>
+                          <p className="text-xs text-gray-400 truncate max-w-xs">
+                            {item.location}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
 
-                  {/* Price */}
-                  <td className="p-3 font-semibold text-primary">
-                    {item.isFree
-                      ? "Free"
-                      : `${item.currency} ${item.price}`}
-                  </td>
+                    {/* Giver */}
+                    <td className="px-6 py-4 hidden md:table-cell text-sm">
+                      <p className="font-medium text-gray-800">
+                        {item.giverName}
+                      </p>
+                      <p className="text-gray-500">
+                        {item.giverEmail}
+                      </p>
+                      <p className="text-gray-400 text-xs">
+                        {item.contactNumber}
+                      </p>
+                    </td>
 
-                  {/* Status */}
-                  <td className="p-3">
-                    <span className="px-3 py-1 text-xs rounded-full bg-primary-dull text-primary">
-                      {item.status}
-                    </span>
-                  </td>
+                    {/* Price */}
+                    <td className="px-2 sm:px-4 md:px-6  py-4 font-semibold text-primary">
+                      {item.isFree
+                        ? "Free"
+                        : `${item.currency} ${item.price}`}
+                    </td>
 
-                  {/* Actions */}
-                  <td className="p-3 text-center space-x-2">
-                    <button
-                    onClick={()=>orderAdd(item._id, item.giverId)}
-                    className="px-3 py-1 text-sm rounded-md bg-primary text-white hover:opacity-90">
-                      Order
-                    </button>
-                    <button
-                     onClick={()=>removeSelectItem(item?._id)}
-                    className="px-3 py-1 text-sm rounded-md bg-red-100 text-red-600 hover:bg-red-200">
-                      Cancel
-                    </button>
-                  </td>
-                </tr>
+                    {/* Status */}
+                    <td className="px-6 py-4 hidden sm:table-cell">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-dull text-white">
+                        {item.status}
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-6 py-4 flex flex-col gap-3">
+                      <button
+                        onClick={() =>
+                          orderAdd(item._id, item.giverId)
+                        }
+                        className="btn-primary px-4 py-1.5  text-sm w-20"
+                      >
+                        Order
+                      </button>
+
+                      <button
+                        onClick={() => handleRemove(item._id)}
+                        className="btn-error text-sm w-20 px-4 py-1.5"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+
+                  {/* Mobile Extra Info */}
+                  <tr className="md:hidden bg-gray-50">
+                    <td colSpan="5" className="px-6 pb-4 text-sm text-gray-600">
+                      <p>
+                        <span className="font-medium">Giver:</span>{" "}
+                        {item.giverName}
+                      </p>
+                      <p>
+                        <span className="font-medium">Email:</span>{" "}
+                        {item.giverEmail}
+                      </p>
+                      <p>
+                        <span className="font-medium">Phone:</span>{" "}
+                        {item.contactNumber}
+                      </p>
+                    </td>
+                  </tr>
+                </React.Fragment>
               ))}
             </tbody>
           </table>
         </div>
-      )}
+      </div>)
+       }
     </div>
+     </div>
   );
 };
 

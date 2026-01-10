@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const RecentlyAdded = () => {
   const { clothes } = useAppContext();
-
+  const availableClothes = clothes.filter(clothe => clothe.status === "Available")
   return (
     <section className="section py-16">
       
@@ -16,7 +16,7 @@ const RecentlyAdded = () => {
                     </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-        {clothes?.slice(0, 8).map((item) => (
+        {availableClothes?.slice(0, 8).map((item) => (
           <ClothesCard
             key={item._id}
             item={item}

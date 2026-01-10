@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../reuseable/LoadingSpinner";
+import Swal from "sweetalert2";
 
 axios.defaults.withCredentials = true ; 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL ;
@@ -100,7 +101,7 @@ export const AppContextProvider =({children})=>{
       const res = await axios.post('/select-item', {id})
    
       if (res.data.success) {
-         setSelectItems(res.data.selectItems);
+          setSelectItems(res.data.selectItems);
           toast.success(res.data.message)
       }
       else{
@@ -127,23 +128,35 @@ export const AppContextProvider =({children})=>{
     }
   }
   
-    const handleDelete = async(id)=>{
-      try {
-        const res = await axios.get(`/deleteClothe/${id}`)
-       if (res.data.success) {
-        //  await fetchUser()
-        // await fetchAllClothes()
-         setClothes((prev) => prev.filter((o) => o._id !== id));
-          toast.success(res.data.message)
-        }
-        else{
-          toast.error(res.data.message)
-  
-        }
-      }  catch (error) {
-        toast.error(error.response?.data?.message || "Failed to Delete item");
+
+
+const handleDelete = async (id) => {
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: 'This will permanently delete the item.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#2563EB', // primary blue
+    cancelButtonColor: '#ef4444', // red
+    confirmButtonText: 'Yes, delete it!',
+    reverseButtons: true,
+  });
+
+  if (result.isConfirmed) {
+    try {
+      const res = await axios.get(`/deleteClothe/${id}`);
+      if (res.data.success) {
+        setClothesPost((prev) => prev.filter((o) => o._id !== id));
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message);
       }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to Delete item");
     }
+  }
+};
+
 
    
 
