@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { FiSmile, FiUser, FiUsers, FiHeart, FiStar } from "react-icons/fi";
+import { FiSmile, FiUser, FiHeart} from "react-icons/fi";
 
 const Categories = () => {
   const categories = [
@@ -20,7 +20,7 @@ const Categories = () => {
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
         {categories.map((cat, index) => {
-          const Icon = cat.icon;
+          const Icon = cat.icon; 
 
           return (
             <NavLink

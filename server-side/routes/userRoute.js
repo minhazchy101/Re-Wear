@@ -9,7 +9,7 @@ const userRouter = express.Router();
 userRouter.post('/signup', signup)
 userRouter.post('/signin',signin)
 userRouter.get('/isUser',userAuth, isUser)
-userRouter.get('/logout',userAuth, logout)
+userRouter.post('/logout',userAuth, logout)
 
 userRouter.post('/select-item', takerAuth, selectItems)
 

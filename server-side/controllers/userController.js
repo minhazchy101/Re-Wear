@@ -152,17 +152,28 @@ export const isUser = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    res.json({ success: true, message: "User Sign Out SuccessFully" });
+    res
+      .set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
+      .set("Pragma", "no-cache")
+      .set("Expires", "0")
+      .clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      })
+      .status(200)
+      .json({
+        success: true,
+        message: "User logged out successfully",
+      });
   } catch (error) {
-    res.send({ success: false, message: `Log out failed for : ${error}` });
+    res.status(500).json({
+      success: false,
+      message: `Logout failed: ${error.message}`,
+    });
   }
 };
+
 
 export const selectItems = async (req, res) => {
   const takerId = req.takerId;

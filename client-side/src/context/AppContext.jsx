@@ -33,12 +33,13 @@ export const AppContextProvider =({children})=>{
 
   const logout = async () => {
       try {
-        const res = await axios.get("/logout");
+       const res = await axios.post("/logout", {});
+
         if (res.data.success) {
           setSelectItems(null);
           setUser(null);
           toast.success(res.data.message);
-          navigate("/");
+        return  navigate("/");
         }
       } catch (err) {
         toast.error(err.message);
@@ -58,9 +59,8 @@ export const AppContextProvider =({children})=>{
          setUser(null)
         setLoading(false)
       }
-      //  toast.error(res.data.message)
     } catch (error) {
-      // toast.error(error.message)
+     
      console.log(error.message)
       
     }finally {
